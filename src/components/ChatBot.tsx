@@ -280,7 +280,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             <button
               className="hover:scale-110 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-2xl"
             >
-              <TravelMateAILogo className="w-16 h-16" />
+              <TravelMateAILogo className="w-12 h-12" />
             </button>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
