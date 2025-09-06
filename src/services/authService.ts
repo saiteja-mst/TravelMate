@@ -287,15 +287,13 @@ class AuthService {
   }
 
   // Listen to auth state changes
-  onAuthStateChange(callback: (user: UserProfile | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const userProfile = await this.getUserProfile(session.user.id);
-        callback(userProfile);
-      } else {
-        callback(null);
-      }
-    });
+  onAuthStateChange(callback: (event: string, session: any) => void) {
+    return supabase.auth.onAuthStateChange(callback);
+  }
+
+  // Expose supabase client for direct access when needed
+  get supabase() {
+    return supabase;
   }
 }
 

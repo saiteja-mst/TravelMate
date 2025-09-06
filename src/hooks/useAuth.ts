@@ -11,11 +11,17 @@ export const useAuth = () => {
     // Check if user is already authenticated
     const checkAuth = async () => {
       try {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
+        const { data: { session } } = await authService.supabase.auth.getSession();
+        if (session?.user) {
+          let userProfile = await authService.getUserProfile(session.user.id);
+          if (!userProfile) {
+            userProfile = await authService.createUserProfile(session.user);
+          }
+          setUser(userProfile);
+        }
       } catch (err) {
         console.error('Auth check error:', err);
-        setError(err instanceof Error ? err.message : 'Authentication check failed');
+        // Don't set error for auth check failures, just continue as unauthenticated
       } finally {
         setLoading(false);
       }
@@ -24,8 +30,16 @@ export const useAuth = () => {
     checkAuth();
 
     // Listen to auth state changes
-    const { data: { subscription } } = authService.onAuthStateChange((user) => {
-      setUser(user);
+    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        let userProfile = await authService.getUserProfile(session.user.id);
+        if (!userProfile) {
+          userProfile = await authService.createUserProfile(session.user);
+        }
+        setUser(userProfile);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
       setError(null);
     });
