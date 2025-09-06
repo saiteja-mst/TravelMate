@@ -209,6 +209,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       const conversation = await chatService.saveConversation(user.id, messages);
       if (conversation) {
         setCurrentConversationId(conversation.id);
+        // Refresh sidebar to show the new conversation
+        setSidebarKey(prev => prev + 1);
       }
     } catch (error) {
       console.error('Failed to save chat:', error);
