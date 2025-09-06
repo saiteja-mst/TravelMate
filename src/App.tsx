@@ -142,7 +142,16 @@ function App() {
     if (currentPage === 'about') {
       return <AboutPage onBack={() => setCurrentPage('chat')} />;
     }
-    return <ChatBot user={user} onSignOut={handleSignOut} onLogoClick={() => setCurrentPage('about')} />;
+    return (
+      <ChatBot 
+        user={user} 
+        onSignOut={handleSignOut} 
+        onLogoClick={() => {
+          console.log('Logo clicked, navigating to about page');
+          setCurrentPage('about');
+        }} 
+      />
+    );
   }
 
   if (showForgotPassword) {

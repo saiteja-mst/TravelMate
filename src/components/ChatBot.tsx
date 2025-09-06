@@ -280,7 +280,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
           <div className="flex items-center gap-3">
             <button
               onClick={onLogoClick}
-              className="hover:scale-110 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-2xl"
+              className="hover:scale-110 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-2xl cursor-pointer"
               title="About TravelMate AI"
             >
               <TravelMateAILogo className="w-16 h-16" />
