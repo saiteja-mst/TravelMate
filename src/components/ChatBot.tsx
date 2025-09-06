@@ -10,7 +10,6 @@ import type { Message, SavedChat, ChatConversation } from '../types/chat';
 interface ChatBotProps {
   user: UserProfile | null;
   onSignOut: () => void;
-  onLogoClick: () => void;
 }
 
 // Initialize OpenAI client
@@ -19,7 +18,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Note: In production, use a backend proxy
 });
 
-const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut, onLogoClick }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',

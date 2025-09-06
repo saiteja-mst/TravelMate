@@ -140,17 +140,10 @@ function App() {
 
   if (isAuthenticated) {
     if (currentPage === 'about') {
-      return <AboutPage onBack={() => setCurrentPage('chat')} />;
+      return <AboutPage onBack={() => setCurrentPage('auth')} />;
     }
     return (
-      <ChatBot 
-        user={user} 
-        onSignOut={handleSignOut} 
-        onLogoClick={() => {
-          console.log('Logo clicked, navigating to about page');
-          setCurrentPage('about');
-        }} 
-      />
+      <ChatBot user={user} onSignOut={handleSignOut} />
     );
   }
 
@@ -435,6 +428,18 @@ function App() {
                 {isSignUp ? 'Sign In Here' : 'Join Our Network'}
               </button>
             </p>
+            
+            {/* About Link */}
+            <div className="text-center mt-3 pt-3 border-t border-white/10">
+              <button
+                onClick={() => setCurrentPage('about')}
+                className="text-xs text-gray-400 hover:text-teal-400 transition-colors hover:underline flex items-center justify-center gap-1 mx-auto group"
+              >
+                <span>✨</span>
+                <span className="group-hover:scale-105 transition-transform">About the Assistant</span>
+                <span>🤖</span>
+              </button>
+            </div>
           </div>
         </div>
 

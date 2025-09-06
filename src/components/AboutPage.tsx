@@ -58,7 +58,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onBack }) => {
             className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-105"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Back to Chat</span>
+            <span className="font-medium">Back to Sign In</span>
           </button>
           
           <div className="flex items-center gap-3">
