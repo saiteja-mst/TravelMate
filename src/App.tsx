@@ -77,7 +77,14 @@ function App() {
       }
       
       if (!result.success) {
-        setErrors({ submit: result.error || 'Authentication failed' });
+        // Handle specific error cases
+        if (result.error === 'User already registered') {
+          setErrors({ submit: 'This email is already registered. Please sign in instead.' });
+        } else if (result.error?.includes('Database error granting user')) {
+          setErrors({ submit: 'Authentication service temporarily unavailable. Please try again.' });
+        } else {
+          setErrors({ submit: result.error || 'Authentication failed' });
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);
