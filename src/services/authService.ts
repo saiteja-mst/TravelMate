@@ -423,6 +423,7 @@ class AuthService {
         alert(`Demo Mode: Your password reset OTP is: ${otp}\n\nEmail service unavailable. Use this OTP to continue.`);
       }
 
+      console.log('OTP generated and stored successfully for:', email);
       return { success: true };
     } catch (error) {
       console.error('Send OTP error:', error);
