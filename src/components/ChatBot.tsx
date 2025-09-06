@@ -5,7 +5,7 @@ import TravelMateAILogo from './Logo';
 import ChatSidebar from './ChatSidebar';
 import { chatService } from '../services/chatService';
 import type { UserProfile } from '../types/auth';
-import type { Message, SavedChat } from '../types/chat';
+import type { Message, SavedChat, ChatConversation } from '../types/chat';
 
 interface ChatBotProps {
   user: UserProfile | null;
@@ -32,6 +32,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [sidebarKey, setSidebarKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -211,6 +212,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       if (conversation) {
         setCurrentConversationId(conversation.id);
         setSaveSuccess(true);
+        // Force sidebar to refresh and show the new conversation
+        setSidebarKey(prev => prev + 1);
         setTimeout(() => setSaveSuccess(false), 3000);
       }
     } catch (error) {
@@ -334,6 +337,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         {/* Chat Sidebar - Always Visible */}
         <div className="w-80 flex-shrink-0">
           <ChatSidebar
+            key={sidebarKey}
             user={user}
             isOpen={true}
             onClose={() => {}} // No-op since sidebar is always open
