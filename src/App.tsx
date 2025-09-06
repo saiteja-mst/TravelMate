@@ -433,7 +433,6 @@ function App() {
             <div className="text-center mt-3 pt-3 border-t border-white/10">
               <button
                 onClick={() => setCurrentPage('about')}
-                onClick={() => setCurrentPage('about')}
                 className="text-xs text-gray-400 hover:text-teal-400 transition-colors hover:underline flex items-center justify-center gap-1 mx-auto group"
               >
                 <span>✨</span>
