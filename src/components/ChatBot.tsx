@@ -277,11 +277,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl fixed top-0 left-0 right-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              className="hover:scale-110 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-2xl"
-            >
-              <TravelMateAILogo className="w-12 h-12" />
-            </button>
+            <TravelMateAILogo className="w-10 h-10" />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
                 <span className="font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
