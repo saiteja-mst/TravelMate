@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 import type { UserProfile, UserSession, TravelPreferences, AuthResponse, SignUpData, SignInData } from '../types/auth';
 
 class AuthService {
@@ -201,6 +202,39 @@ class AuthService {
       return data;
     } catch (error) {
       console.error('Get user profile error:', error);
+      throw error;
+    }
+  }
+
+  // Create user profile
+  async createUserProfile(user: User): Promise<UserProfile | null> {
+    try {
+      const profileData = {
+        id: user.id,
+        email: user.email!,
+        full_name: user.user_metadata?.full_name || user.email!.split('@')[0],
+        avatar_url: user.user_metadata?.avatar_url || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        is_active: true,
+        preferences: {}
+      };
+
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .insert(profileData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Create user profile error:', error);
+        throw new Error(error.message);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Create user profile error:', error);
       throw error;
     }
   }
