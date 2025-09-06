@@ -248,8 +248,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
-                <span className="font-serif italic tracking-wide font-light relative">
-                  Travel<span className="font-sans font-bold not-italic">Mate</span>
+                <span className="font-serif italic tracking-wide font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
+                  Travel<span className="font-sans font-bold not-italic text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">Mate</span>
                   <span className="text-sm ml-1 font-sans font-normal not-italic opacity-80">AI</span>
                 </span>
               </h1>

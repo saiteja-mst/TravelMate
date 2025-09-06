@@ -136,8 +136,8 @@ function App() {
               </div>
               
               <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent mb-2 font-['Inter']">
-                <span className="font-serif italic tracking-wider text-4xl font-light relative">
-                  Travel<span className="font-sans font-bold not-italic">Mate</span>
+                <span className="font-serif italic tracking-wider text-4xl font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
+                  Travel<span className="font-sans font-bold not-italic text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">Mate</span>
                   <span className="absolute -top-1 -right-2 text-lg">✈</span>
                 </span>
               </h1>
