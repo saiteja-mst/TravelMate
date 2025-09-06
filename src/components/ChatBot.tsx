@@ -209,8 +209,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       const conversation = await chatService.saveConversation(user.id, messages);
       if (conversation) {
         setCurrentConversationId(conversation.id);
-        // Refresh sidebar to show the new conversation
-        setSidebarKey(prev => prev + 1);
       }
     } catch (error) {
       console.error('Failed to save chat:', error);
@@ -220,10 +218,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
   const handleLoadConversation = (savedChat: SavedChat) => {
     setMessages(savedChat.messages);
     setCurrentConversationId(savedChat.conversation.id);
-    // Ensure chatbot window is visible when loading a conversation
-    if (!showChatBot) {
-      setShowChatBot(true);
-    }
   };
 
   const formatMessageContent = (content: string) => {
@@ -320,17 +314,11 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               onClick={handleSaveChat}
               disabled={messages.length <= 1}
               className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
-                currentConversationId
-                  ? 'text-green-400 bg-green-400/20'
-                  : messages.length <= 1
+                messages.length <= 1
                   ? 'text-gray-600 cursor-not-allowed'
                   : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
               }`}
-              title={
-                currentConversationId
-                  ? 'Chat saved ✓'
-                  : 'Save chat'
-              }
+              title="Save chat"
             >
               <Save className="w-5 h-5" />
             </button>
