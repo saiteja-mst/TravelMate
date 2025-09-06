@@ -139,12 +139,13 @@ function App() {
   }
 
   if (isAuthenticated) {
-    if (currentPage === 'about') {
-      return <AboutPage onBack={() => setCurrentPage('auth')} />;
-    }
     return (
       <ChatBot user={user} onSignOut={handleSignOut} />
     );
+  }
+
+  if (currentPage === 'about') {
+    return <AboutPage onBack={() => setCurrentPage('auth')} />;
   }
 
   if (showForgotPassword) {
