@@ -345,7 +345,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell me about your dream trip... Where would you like to go?"
+                  placeholder="Come on, let's deep-dive into your travel plan"
                   className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 text-white placeholder-gray-300 shadow-xl hover:bg-white/15 transition-all duration-200"
                 />
               </div>
