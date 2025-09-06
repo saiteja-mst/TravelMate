@@ -54,15 +54,12 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
     try {
       const result = await authService.sendPasswordResetOTP(email);
       
-      // Wait for the result (which may include showing the alert)
-      const otpResult = await result;
-      
-      if (otpResult && otpResult.success) {
+      if (result && result.success) {
         setCurrentStep('otp');
         startResendCooldown();
         setError(''); // Clear any previous errors
       } else {
-        setError(otpResult?.error || 'Failed to send OTP. Please try again.');
+        setError(result?.error || 'Failed to send OTP. Please try again.');
       }
     } catch (err) {
       console.error('Send OTP error:', err);
