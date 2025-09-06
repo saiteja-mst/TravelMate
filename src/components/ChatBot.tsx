@@ -1,15 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe } from 'lucide-react';
+import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Save, History } from 'lucide-react';
 import OpenAI from 'openai';
 import TravelMateAILogo from './Logo';
+import ChatHistory from './ChatHistory';
+import { chatService } from '../services/chatService';
 import type { UserProfile } from '../types/auth';
-
-interface Message {
-  id: string;
-  type: 'user' | 'bot';
-  content: string;
-  timestamp: Date;
-}
+import type { Message, SavedChat } from '../types/chat';
 
 interface ChatBotProps {
   user: UserProfile | null;
@@ -33,6 +29,10 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showChatHistory, setShowChatHistory] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -191,10 +191,37 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       {
         id: '1',
         type: 'bot',
-        content: "Hey Hi, an amazing Human Being, can we just start our journey with a warm nice greeting ?",
+        content: `Hey Hi, ${user?.full_name || 'amazing Human Being'}! Welcome to TravelMate AI. Can we just start our journey with a warm nice greeting?`,
         timestamp: new Date()
       }
     ]);
+    setCurrentConversationId(null);
+    setSaveSuccess(false);
+  };
+
+  const handleSaveChat = async () => {
+    if (!user || messages.length <= 1 || isSaving) return;
+
+    setIsSaving(true);
+    try {
+      const conversation = await chatService.saveConversation(user.id, messages);
+      if (conversation) {
+        setCurrentConversationId(conversation.id);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      }
+    } catch (error) {
+      console.error('Failed to save chat:', error);
+      // Could add error toast here
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleLoadConversation = (savedChat: SavedChat) => {
+    setMessages(savedChat.messages);
+    setCurrentConversationId(savedChat.conversation.id);
+    setSaveSuccess(false);
   };
 
   const formatMessageContent = (content: string) => {
@@ -264,6 +291,37 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               title="Clear chat"
             >
               <RotateCcw className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setShowChatHistory(true)}
+              className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
+              title="Chat history"
+            >
+              <History className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleSaveChat}
+              disabled={messages.length <= 1 || isSaving}
+              className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
+                saveSuccess
+                  ? 'text-green-400 bg-green-400/20'
+                  : messages.length <= 1
+                  ? 'text-gray-600 cursor-not-allowed'
+                  : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
+              }`}
+              title={
+                saveSuccess
+                  ? 'Chat saved!'
+                  : currentConversationId
+                  ? 'Update saved chat'
+                  : 'Save chat'
+              }
+            >
+              {isSaving ? (
+                <Sparkles className="w-5 h-5 animate-spin" />
+              ) : (
+                <Save className="w-5 h-5" />
+              )}
             </button>
             <button
               onClick={onSignOut}
@@ -362,6 +420,15 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
           </div>
         </div>
       </div>
+
+      {/* Chat History Modal */}
+      {showChatHistory && (
+        <ChatHistory
+          user={user}
+          onLoadConversation={handleLoadConversation}
+          onClose={() => setShowChatHistory(false)}
+        />
+      )}
     </div>
   );
 };
