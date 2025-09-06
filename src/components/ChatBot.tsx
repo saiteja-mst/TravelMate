@@ -277,7 +277,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl fixed top-0 left-0 right-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 flex-shrink-0">
+            <div className="w-16 h-16 flex-shrink-0">
               <TravelMateAILogo className="w-full h-full" />
             </div>
             <div>
