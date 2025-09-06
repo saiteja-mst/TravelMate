@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
+import TravelMateAILogo from './components/Logo';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -131,8 +132,8 @@ function App() {
           <div className="p-8 pb-6">
             <div className="text-center mb-8">
               {/* Travel-themed logo */}
-              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl hover:rotate-12 transition-transform duration-300">
-                <Plane className="w-10 h-10 text-white transform rotate-45" />
+              <div className="mx-auto mb-6 hover:scale-110 transition-transform duration-300">
+                <TravelMateAILogo className="w-20 h-20" />
               </div>
               
               <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent mb-2 font-['Inter']">

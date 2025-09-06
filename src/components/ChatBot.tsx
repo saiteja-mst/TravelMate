@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe } from 'lucide-react';
 import OpenAI from 'openai';
+import TravelMateAILogo from './Logo';
 
 interface Message {
   id: string;
@@ -243,9 +244,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl relative z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg hover:rotate-12 transition-transform duration-300">
-              <Plane className="w-5 h-5 text-white transform rotate-45" />
-            </div>
+            <TravelMateAILogo className="w-10 h-10 hover:scale-110 transition-transform duration-300" />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
                 <span className="font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
