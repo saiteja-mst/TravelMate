@@ -28,11 +28,8 @@ class AuthService {
         return { user: null, session: null, error: 'Failed to create user account' };
       }
 
-      // Wait a moment for the trigger to create the profile
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Get the created user profile
-      const userProfile = await this.getUserProfile(authData.user.id);
+      // Create user profile manually since triggers might not work
+      const userProfile = await this.createUserProfile(authData.user);
       
       // Create session record
       const session = await this.createSession(authData.user.id);
@@ -69,8 +66,11 @@ class AuthService {
         return { user: null, session: null, error: 'Failed to sign in' };
       }
 
-      // Get user profile
-      const userProfile = await this.getUserProfile(authData.user.id);
+      // Get or create user profile
+      let userProfile = await this.getUserProfile(authData.user.id);
+      if (!userProfile) {
+        userProfile = await this.createUserProfile(authData.user);
+      }
       
       // Create session record
       const session = await this.createSession(authData.user.id);
