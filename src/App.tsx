@@ -380,17 +380,6 @@ function App() {
                 </div>
               )}
 
-              {/* About the Assistant Button */}
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={handleAboutPage}
-                  className="text-sm text-gray-400 hover:text-teal-400 font-medium transition-colors hover:underline"
-                >
-                  About the Assistant
-                </button>
-              </div>
-
               {/* Global Error Message */}
               {(errors.submit || authError) && (
                 <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-3 mb-4">
