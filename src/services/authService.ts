@@ -445,7 +445,7 @@ class AuthService {
       // Update password using Supabase Admin API
       // Note: In production, this should be done through a secure backend endpoint
       const { error } = await supabase.auth.updateUser({
-        { password: newPassword }
+        password: newPassword
       });
 
       if (error) {
