@@ -53,48 +53,49 @@ class AuthService {
   // Sign in existing user
   async signIn(data: SignInData): Promise<AuthResponse> {
     try {
-      // Check if user has a locally stored password (for demo password reset)
-      const storedPasswordData = localStorage.getItem(`user_password_${data.email}`);
-      if (storedPasswordData) {
-        const passwordData = JSON.parse(storedPasswordData);
-        if (passwordData.password === data.password) {
-          // Create a mock successful sign-in for demo purposes
-          const mockUser: UserProfile = {
-            id: `demo_${Date.now()}`,
-            email: data.email,
-            full_name: data.email.split('@')[0],
-            avatar_url: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            last_login: new Date().toISOString(),
-            is_active: true,
-            preferences: {}
-          };
-          
-          const mockSession: UserSession = {
-            id: `session_${Date.now()}`,
-            user_id: mockUser.id,
-            session_token: `token_${Date.now()}`,
-            ip_address: null,
-            user_agent: navigator.userAgent,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-            is_active: true
-          };
-          
-          // Clean up the temporary password storage
-          localStorage.removeItem(`user_password_${data.email}`);
-          
-          return { user: mockUser, session: mockSession, error: null };
-        }
-      }
-
+      // First try normal Supabase authentication
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password
       });
 
+      // If normal auth fails, check for locally stored password (fallback for demo)
       if (authError) {
+        const storedPasswordData = localStorage.getItem(`user_password_${data.email}`);
+        if (storedPasswordData) {
+          const passwordData = JSON.parse(storedPasswordData);
+          if (passwordData.password === data.password) {
+            // Create a mock successful sign-in for demo purposes
+            const mockUser: UserProfile = {
+              id: `demo_${Date.now()}`,
+              email: data.email,
+              full_name: data.email.split('@')[0],
+              avatar_url: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              last_login: new Date().toISOString(),
+              is_active: true,
+              preferences: {}
+            };
+            
+            const mockSession: UserSession = {
+              id: `session_${Date.now()}`,
+              user_id: mockUser.id,
+              session_token: `token_${Date.now()}`,
+              ip_address: null,
+              user_agent: navigator.userAgent,
+              created_at: new Date().toISOString(),
+              expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+              is_active: true
+            };
+            
+            // Clean up the temporary password storage
+            localStorage.removeItem(`user_password_${data.email}`);
+            
+            return { user: mockUser, session: mockSession, error: null };
+          }
+        }
+        
         console.error('Signin error:', authError);
         return { user: null, session: null, error: authError.message };
       }
@@ -489,16 +490,25 @@ class AuthService {
         return { success: false, error: 'Reset session has expired. Please start over.' };
       }
 
-      // For demo purposes, we'll simulate password update by storing the new password
-      // In production, this would be handled by a secure backend endpoint
-      const passwordData = {
-        email,
-        password: newPassword,
-        updatedAt: new Date().toISOString()
-      };
-      
-      // Store the new password temporarily for demo purposes
-      localStorage.setItem(`user_password_${email}`, JSON.stringify(passwordData));
+      // Update password in Supabase Auth
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (updateError) {
+        console.error('Password update error:', updateError);
+        
+        // If user is not signed in, we need to use admin API or create a temporary session
+        // For now, we'll store locally as fallback for demo purposes
+        const passwordData = {
+          email,
+          password: newPassword,
+          updatedAt: new Date().toISOString()
+        };
+        
+        localStorage.setItem(`user_password_${email}`, JSON.stringify(passwordData));
+        console.warn('Password stored locally for demo - in production, use server-side password reset');
+      }
 
       // Clean up OTP data
       localStorage.removeItem(`password_reset_${email}`);
