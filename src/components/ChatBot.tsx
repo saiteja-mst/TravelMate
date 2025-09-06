@@ -471,14 +471,22 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               <p className="text-gray-300 mb-6">Use the toggle buttons above to show the chat history or chat window</p>
               <div className="flex gap-4 justify-center">
                 <button
-                  onClick={() => setShowChatHistory(true)}
+                  onClick={() => {
+                    setShowChatHistory(true);
+                    setShowChatBot(true);
+                  }}
                   className="px-6 py-3 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2"
                 >
                   <MessageSquare className="w-5 h-5" />
                   Show Chat History
                 </button>
                 <button
-                  onClick={() => setShowChatBot(true)}
+                  onClick={() => {
+                    setShowChatBot(true);
+                    if (!showChatHistory) {
+                      setShowChatHistory(true);
+                    }
+                  }}
                   className="px-6 py-3 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2"
                 >
                   <Bot className="w-5 h-5" />
