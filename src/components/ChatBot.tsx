@@ -33,6 +33,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [sidebarKey, setSidebarKey] = useState(0);
+  const [showChatHistory, setShowChatHistory] = useState(true);
+  const [showChatBot, setShowChatBot] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -299,6 +301,28 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               <RotateCcw className="w-5 h-5" />
             </button>
             <button
+              onClick={() => setShowChatHistory(!showChatHistory)}
+              className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
+                showChatHistory
+                  ? 'text-teal-400 bg-teal-400/20'
+                  : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
+              }`}
+              title="Toggle chat history"
+            >
+              <MessageSquare className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setShowChatBot(!showChatBot)}
+              className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
+                showChatBot
+                  ? 'text-teal-400 bg-teal-400/20'
+                  : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
+              }`}
+              title="Toggle chat window"
+            >
+              <Bot className="w-5 h-5" />
+            </button>
+            <button
               onClick={handleSaveChat}
               disabled={messages.length <= 1 || isSaving}
               className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
@@ -334,102 +358,139 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
       {/* Main Content Area with Sidebar */}
       <div className="flex-1 overflow-hidden flex">
-        {/* Chat Sidebar */}
-        <ChatSidebar
-          key={sidebarKey}
-          user={user}
-          isOpen={true}
-          onClose={() => {}}
-          onLoadConversation={handleLoadConversation}
-          onNewChat={startNewChat}
-          currentConversationId={currentConversationId}
-        />
+        {/* Chat History Sidebar */}
+        <div className={`transition-all duration-300 ease-in-out ${
+          showChatHistory ? 'w-80 opacity-100' : 'w-0 opacity-0'
+        } overflow-hidden`}>
+          <ChatSidebar
+            key={sidebarKey}
+            user={user}
+            isOpen={showChatHistory}
+            onClose={() => setShowChatHistory(false)}
+            onLoadConversation={handleLoadConversation}
+            onNewChat={startNewChat}
+            currentConversationId={currentConversationId}
+          />
+        </div>
 
         {/* Chat Messages Area */}
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full">
-            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  {message.type === 'bot' && (
-                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
-                      <Bot className="w-5 h-5 text-white" />
+        <div className={`transition-all duration-300 ease-in-out ${
+          showChatBot ? 'flex-1 opacity-100' : 'w-0 opacity-0'
+        } overflow-hidden flex flex-col`}>
+          {showChatBot && (
+            <>
+              <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full">
+                <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      {message.type === 'bot' && (
+                        <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
+                          <Bot className="w-5 h-5 text-white" />
+                        </div>
+                      )}
+                      
+                      <div
+                        className={`max-w-3xl rounded-2xl px-6 py-4 ${
+                          message.type === 'user'
+                            ? 'bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white ml-12 shadow-xl hover:shadow-2xl transition-shadow duration-300'
+                            : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-white/15'
+                        } hover:scale-[1.02] transition-transform duration-200`}
+                      >
+                        <div className={`text-sm leading-relaxed ${
+                          message.type === 'user' ? 'text-white' : 'text-gray-100'
+                        }`}>
+                          {message.type === 'bot' ? formatMessageContent(message.content) : message.content}
+                        </div>
+                        <div className={`text-xs mt-2 ${
+                          message.type === 'user' ? 'text-orange-100' : 'text-gray-400'
+                        }`}>
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+
+                      {message.type === 'user' && (
+                        <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
+                          <User className="w-5 h-5 text-white" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {isLoading && (
+                    <div className="flex gap-4 justify-start">
+                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
+                        <Bot className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl px-6 py-4 animate-pulse">
+                        <div className="flex items-center gap-2 text-gray-300">
+                          <Sparkles className="w-4 h-4 animate-spin text-teal-400" />
+                          <span className="text-sm">Creating your personalized itinerary...</span>
+                        </div>
+                      </div>
                     </div>
                   )}
-                  
-                  <div
-                    className={`max-w-3xl rounded-2xl px-6 py-4 ${
-                      message.type === 'user'
-                        ? 'bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white ml-12 shadow-xl hover:shadow-2xl transition-shadow duration-300'
-                        : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-white/15'
-                    } hover:scale-[1.02] transition-transform duration-200`}
-                  >
-                    <div className={`text-sm leading-relaxed ${
-                      message.type === 'user' ? 'text-white' : 'text-gray-100'
-                    }`}>
-                      {message.type === 'bot' ? formatMessageContent(message.content) : message.content}
-                    </div>
-                    <div className={`text-xs mt-2 ${
-                      message.type === 'user' ? 'text-orange-100' : 'text-gray-400'
-                    }`}>
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                  </div>
 
-                  {message.type === 'user' && (
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
-                      <User className="w-5 h-5 text-white" />
-                    </div>
-                  )}
+                  <div ref={messagesEndRef} />
                 </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex gap-4 justify-start">
-                  <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl px-6 py-4 animate-pulse">
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <Sparkles className="w-4 h-4 animate-spin text-teal-400" />
-                      <span className="text-sm">Creating your personalized itinerary...</span>
+              </div>
+              
+              {/* Input Area - Fixed at Bottom */}
+              <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
+                <div className="max-w-4xl mx-auto p-4">
+                  <div className="flex gap-4 items-end">
+                    <div className="flex-1">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Come on, let's deep-dive into your travel plan"
+                        className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 text-white placeholder-gray-300 shadow-xl hover:bg-white/15 transition-all duration-200"
+                      />
                     </div>
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!inputMessage.trim() || isLoading}
+                      className="p-4 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-2xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-110 hover:shadow-orange-500/25"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
-              )}
+              </div>
+            </>
+          )}
+        </div>
 
-              <div ref={messagesEndRef} />
-            </div>
-          </div>
-          
-          {/* Input Area - Fixed at Bottom */}
-          <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
-            <div className="max-w-4xl mx-auto p-4">
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Come on, let's deep-dive into your travel plan"
-                    className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 text-white placeholder-gray-300 shadow-xl hover:bg-white/15 transition-all duration-200"
-                  />
-                </div>
+        {/* Empty State when both panels are hidden */}
+        {!showChatHistory && !showChatBot && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <TravelMateAILogo className="w-32 h-32 mx-auto mb-6 opacity-50" />
+              <h2 className="text-2xl font-bold text-white mb-4">Welcome to TravelMate AI</h2>
+              <p className="text-gray-300 mb-6">Use the toggle buttons above to show the chat history or chat window</p>
+              <div className="flex gap-4 justify-center">
                 <button
-                  onClick={handleSendMessage}
-                  disabled={!inputMessage.trim() || isLoading}
-                  className="p-4 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-2xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-110 hover:shadow-orange-500/25"
+                  onClick={() => setShowChatHistory(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2"
                 >
-                  <Send className="w-5 h-5" />
+                  <MessageSquare className="w-5 h-5" />
+                  Show Chat History
+                </button>
+                <button
+                  onClick={() => setShowChatBot(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2"
+                >
+                  <Bot className="w-5 h-5" />
+                  Show Chat Window
                 </button>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
