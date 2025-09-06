@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Settings } from 'lucide-react';
+import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Settings, LogOut } from 'lucide-react';
 import OpenAI from 'openai';
 import TravelMateAILogo from './Logo';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import { UserProfile } from '../services/authService';
 
 interface Message {
   id: string;
@@ -10,7 +12,11 @@ interface Message {
   timestamp: Date;
 }
 
-interface ChatBotProps {}
+interface ChatBotProps {
+  user: SupabaseUser;
+  userProfile: UserProfile | null;
+  onSignOut: () => void;
+}
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -18,7 +24,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Note: In production, use a backend proxy
 });
 
-const ChatBot: React.FC<ChatBotProps> = () => {
+const ChatBot: React.FC<ChatBotProps> = ({ user, userProfile, onSignOut }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -259,6 +265,17 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             <button
               onClick={clearChat}
               className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
+              title="Clear chat"
+            >
+              <RotateCcw className="w-5 h-5" />
+            </button>
+            <button
+              onClick={onSignOut}
+              className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
+              title="Sign out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
               title="Clear chat"
             >
               <RotateCcw className="w-5 h-5" />
