@@ -62,8 +62,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
         const conversation = await chatService.saveConversation(user.id, messages);
         if (conversation) {
           setCurrentConversationId(conversation.id);
-          // Force sidebar to refresh and show the new conversation
-          setSidebarKey(prev => prev + 1);
         }
       }
     } catch (error) {
@@ -93,9 +91,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
       
       // Update conversation timestamp
       await chatService.updateConversationTimestamp(currentConversationId);
-      
-      // Refresh sidebar to show updated conversation
-      setSidebarKey(prev => prev + 1);
     } catch (error) {
       console.error('Failed to update existing conversation:', error);
       throw error;
@@ -386,11 +381,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                   : 'Save chat manually'
               }
             >
-              {isAutoSaving ? (
-                <Sparkles className="w-5 h-5 animate-spin" />
-              ) : (
-                <Save className="w-5 h-5" />
-              )}
+              <Save className="w-5 h-5" />
             </button>
             <button
               onClick={onSignOut}
