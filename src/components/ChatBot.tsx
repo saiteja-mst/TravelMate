@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe } from 'lucide-react';
 import OpenAI from 'openai';
 import TravelMateAILogo from './Logo';
+import type { UserProfile } from '../types/auth';
 
 interface Message {
   id: string;
@@ -11,6 +12,7 @@ interface Message {
 }
 
 interface ChatBotProps {
+  user: UserProfile | null;
   onSignOut: () => void;
 }
 
@@ -20,12 +22,12 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Note: In production, use a backend proxy
 });
 
-const ChatBot: React.FC<ChatBotProps> = ({ onSignOut }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       type: 'bot',
-      content: "Hey Hi, an amazing Human Being, can we just start our journey with a warm nice greeting ?",
+      content: `Hey Hi, ${user?.full_name || 'amazing Human Being'}! Welcome to TravelMate AI. Can we just start our journey with a warm nice greeting?`,
       timestamp: new Date()
     }
   ]);
