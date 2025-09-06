@@ -33,6 +33,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [showChatHistory, setShowChatHistory] = useState(true);
   const [showChatBot, setShowChatBot] = useState(true);
   const [sidebarKey, setSidebarKey] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -206,6 +207,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
   const handleSaveChat = async () => {
     if (!user || messages.length <= 1) return;
 
+    setIsSaving(true);
     try {
       const conversation = await chatService.saveConversation(user.id, messages);
       if (conversation) {
@@ -216,6 +218,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       }
     } catch (error) {
       console.error('Failed to save chat:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -316,15 +320,19 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             </button>
             <button
               onClick={handleSaveChat}
-              disabled={messages.length <= 1}
+              disabled={messages.length <= 1 || isSaving}
               className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
-                messages.length <= 1
+                messages.length <= 1 || isSaving
                   ? 'text-gray-600 cursor-not-allowed'
                   : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
               }`}
               title="Save chat"
             >
-              <Save className="w-5 h-5" />
+              {isSaving ? (
+                <RotateCcw className="w-5 h-5 animate-spin" />
+              ) : (
+                <Save className="w-5 h-5" />
+              )}
             </button>
             <button
               onClick={onSignOut}
