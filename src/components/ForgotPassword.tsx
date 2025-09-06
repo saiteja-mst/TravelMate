@@ -205,8 +205,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
         <p className="text-gray-300 text-sm">
           We've sent a 6-digit OTP to <span className="text-teal-400 font-semibold">{email}</span>
         </p>
-        <p className="text-gray-400 text-xs mt-2">
-          Please check your email inbox and spam folder
+        <p className="text-gray-400 text-xs mt-2 bg-blue-500/20 border border-blue-500/30 rounded-lg p-2">
+          📧 Please check your email inbox and spam/junk folder. The OTP expires in 10 minutes.
         </p>
       </div>
 
@@ -379,7 +379,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
               <div>
                 <h1 className="text-lg font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent">
                   TravelMate AI
-                </h1>
+                Enter your email address and we'll send you a 6-digit OTP code to reset your password
               </div>
             </div>
 

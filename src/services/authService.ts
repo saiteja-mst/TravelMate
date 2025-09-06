@@ -393,23 +393,36 @@ class AuthService {
       try {
         // Send OTP via Supabase Edge Function
         const { data, error } = await supabase.functions.invoke('send-otp-email', {
-          body: { email, otp }
+          body: { email, otp },
+          headers: {
+            'Content-Type': 'application/json',
+          }
         });
 
         if (error) {
           console.error('Edge function error:', error);
-          return { success: false, error: 'Failed to send OTP email. Please try again.' };
-        } else if (data?.email_sent) {
-          // Email was sent successfully
-          console.log('OTP email sent successfully to:', email);
+          return { 
+            success: false, 
+            error: error.message || 'Failed to send OTP email. Please try again.' 
+          };
+        }
+        
+        if (data?.success && data?.email_sent) {
+          console.log('✅ OTP email sent successfully to:', email);
           return { success: true };
         } else {
-          console.log('OTP email sent successfully to:', email);
-          return { success: true };
+          console.error('Email sending failed:', data);
+          return { 
+            success: false, 
+            error: data?.error || 'Failed to send OTP email. Please try again.' 
+          };
         }
       } catch (emailError) {
         console.error('Email sending error:', emailError);
-        return { success: false, error: 'Email service unavailable. Please try again later.' };
+        return { 
+          success: false, 
+          error: 'Email service temporarily unavailable. Please try again in a few minutes.' 
+        };
       }
     } catch (error) {
       console.error('Send OTP error:', error);
