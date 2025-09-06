@@ -18,6 +18,8 @@ export default {
         'sans': ['Inter', 'Poppins', 'system-ui', 'sans-serif'],
         'display': ['Inter', 'Poppins', 'system-ui', 'sans-serif'],
         'serif': ['Playfair Display', 'Georgia', 'Times New Roman', 'serif'],
+        'elegant': ['Dancing Script', 'cursive'],
+        'modern': ['Montserrat', 'Inter', 'sans-serif'],
       },
       boxShadow: {
         '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.25)',
