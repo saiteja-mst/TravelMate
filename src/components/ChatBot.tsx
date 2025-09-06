@@ -380,9 +380,9 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         {/* Chat Messages Area */}
         <div className={`transition-all duration-300 ease-in-out ${
           showChatBot ? 'flex-1 opacity-100' : 'w-0 opacity-0'
-        } overflow-hidden flex flex-col h-full`}>
+        } overflow-hidden h-full`}>
           {showChatBot && (
-            <>
+            <div className="flex flex-col h-full relative z-40">
               {/* Messages Container - Takes remaining space above input */}
               <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 max-w-4xl mx-auto w-full">
                   {messages.map((message) => (
@@ -441,7 +441,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               </div>
               
               {/* Input Area - Always at Bottom */}
-              <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl flex-shrink-0">
+              <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl flex-shrink-0 relative z-40">
                 <div className="max-w-4xl mx-auto p-4">
                   <div className="flex gap-4 items-end">
                     <div className="flex-1">
@@ -465,7 +465,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
 
