@@ -104,6 +104,23 @@ class AuthService {
       const { error } = await supabase.auth.signOut();
       
       if (error) {
+        // Check if the error is due to missing/invalid session
+        const sessionMissingErrors = [
+          'Auth session missing!',
+          'Session from session_id claim in JWT does not exist',
+          'session_not_found'
+        ];
+        
+        const isSessionMissingError = sessionMissingErrors.some(errorMsg => 
+          error.message.includes(errorMsg) || error.code === 'session_not_found'
+        );
+        
+        if (isSessionMissingError) {
+          // Treat missing session as successful sign-out
+          console.warn('Session already invalid during sign-out, treating as success:', error.message);
+          return { error: null };
+        }
+        
         console.error('Signout error:', error);
         return { error: error.message };
       }
