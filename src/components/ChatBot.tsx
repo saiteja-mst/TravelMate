@@ -490,8 +490,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                 </button>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
