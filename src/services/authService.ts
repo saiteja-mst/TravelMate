@@ -339,14 +339,17 @@ class AuthService {
           console.error('Edge function error:', error);
           // Fallback: Show OTP in alert for demo
           alert(`Demo Mode: Your password reset OTP is: ${otp}\n\nEmail service is not configured. In production, this would be sent to your email.`);
-        } else if (data?.demo_otp) {
+        } else if (data?.demo_mode) {
           // Demo mode - show OTP
-          alert(`Demo Mode: Your password reset OTP is: ${data.demo_otp}\n\nCheck your email for the OTP (or use the one shown here for demo).`);
+          alert(`Demo Mode: Your password reset OTP is: ${data.demo_otp}\n\nIn production, this would be sent to your email address.`);
+        } else {
+          // Production mode - email was sent
+          console.log('OTP email sent successfully');
         }
       } catch (emailError) {
         console.error('Email sending error:', emailError);
         // Show OTP in alert as fallback
-        alert(`Fallback Mode: Your password reset OTP is: ${otp}\n\nEmail service unavailable. Use this OTP to continue.`);
+        alert(`Demo Mode: Your password reset OTP is: ${otp}\n\nEmail service unavailable. Use this OTP to continue.`);
       }
 
       return { success: true };
