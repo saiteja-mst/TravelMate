@@ -12,7 +12,34 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { email, otp } = await req.json()
+    const requestBody = await req.text()
+    
+    if (!requestBody || requestBody.trim() === '') {
+      return new Response(
+        JSON.stringify({ error: 'Request body is empty' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    let email, otp
+    try {
+      const parsedBody = JSON.parse(requestBody)
+      email = parsedBody.email
+      otp = parsedBody.otp
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError)
+      console.error('Request body:', requestBody)
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body', details: parseError.message }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
 
     if (!email || !otp) {
       return new Response(

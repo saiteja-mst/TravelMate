@@ -393,7 +393,7 @@ class AuthService {
       try {
         // Send OTP via Supabase Edge Function
         const { data, error } = await supabase.functions.invoke('send-otp-email', {
-          body: { email, otp },
+          body: JSON.stringify({ email, otp }),
           headers: {
             'Content-Type': 'application/json',
           }
