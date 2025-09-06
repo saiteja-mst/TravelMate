@@ -25,7 +25,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ onSignOut }) => {
     {
       id: '1',
       type: 'bot',
-      content: "Hey, Hi, an Amazing Human Being! \nCan we just start our journey with just a Hi to me please....",
+      content: "Hey Hi, an amazing Human Being, can we just start our journey with a warm nice greeting ?",
       timestamp: new Date()
     }
   ]);
@@ -189,7 +189,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       {
         id: '1',
         type: 'bot',
-        content: "Hey, Hi, an Amazing Human Being! \nCan we just start our journey with just a Hi to me please....",
+        content: "Hey Hi, an amazing Human Being, can we just start our journey with a warm nice greeting ?",
         timestamp: new Date()
       }
     ]);
