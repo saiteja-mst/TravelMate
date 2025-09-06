@@ -32,6 +32,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [showChatHistory, setShowChatHistory] = useState(true);
   const [showChatBot, setShowChatBot] = useState(true);
+  const [sidebarKey, setSidebarKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -209,7 +210,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       const conversation = await chatService.saveConversation(user.id, messages);
       if (conversation) {
         setCurrentConversationId(conversation.id);
-        // Refresh sidebar to show the new conversation
+        // Force sidebar refresh to show the new conversation
+        setSidebarKey(prev => prev + 1);
         setSidebarKey(prev => prev + 1);
       }
     } catch (error) {
@@ -341,6 +343,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
           showChatHistory ? 'w-80 opacity-100' : 'w-0 opacity-0'
         } overflow-hidden`}>
           <ChatSidebar
+            key={sidebarKey}
             user={user}
             isOpen={showChatHistory}
             onClose={() => setShowChatHistory(false)}
