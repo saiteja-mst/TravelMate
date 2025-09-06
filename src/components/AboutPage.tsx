@@ -62,15 +62,17 @@ const AboutPage: React.FC<AboutPageProps> = ({ onBack }) => {
           </button>
           
           <div className="flex items-center gap-3">
-            <TravelMateAILogo className="w-8 h-8" />
+            <div className="w-8 h-8 flex-shrink-0">
+              <TravelMateAILogo className="w-full h-full" />
+            </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
-                <span className="font-light text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
-                  <span className="font-elegant font-semibold tracking-wide text-base">Travel</span><span className="font-modern font-bold tracking-tight text-base">Mate</span>
-                  <span className="text-xs ml-1 font-sans font-normal opacity-80">AI</span>
+                <span className="font-light text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text relative">
+                  <span className="font-elegant font-semibold tracking-wide">Travel</span><span className="font-modern font-bold tracking-tight">Mate</span>
+                  <span className="absolute -top-2 -right-3 text-xl animate-bounce" style={{ animationDuration: '3s' }}>✈</span>
                 </span>
               </h1>
-              <p className="text-xs text-gray-300">About the Assistant</p>
+              <p className="text-sm text-gray-300">About the Assistant</p>
             </div>
           </div>
 
