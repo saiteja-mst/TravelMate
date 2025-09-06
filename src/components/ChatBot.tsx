@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe } from 'lucide-react';
 import OpenAI from 'openai';
 import TravelMateAILogo from './Logo';
+import type { UserProfile } from '../lib/supabase';
 
 interface Message {
   id: string;
@@ -12,6 +13,8 @@ interface Message {
 
 interface ChatBotProps {
   onSignOut: () => void;
+  user?: any;
+  profile?: UserProfile | null;
 }
 
 // Initialize OpenAI client
@@ -20,7 +23,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Note: In production, use a backend proxy
 });
 
-const ChatBot: React.FC<ChatBotProps> = ({ onSignOut }) => {
+const ChatBot: React.FC<ChatBotProps> = ({ onSignOut, user, profile }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -252,7 +255,9 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                   <span className="text-sm ml-1 font-sans font-normal not-italic opacity-80">AI</span>
                 </span>
               </h1>
-              <p className="text-sm text-gray-300">Your Personal Travel Assistant</p>
+              <p className="text-sm text-gray-300">
+                {profile?.full_name ? `Welcome back, ${profile.full_name.split(' ')[0]}!` : 'Your Personal Travel Assistant'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">

@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
 import TravelMateAILogo from './components/Logo';
+import { authService } from './services/authService';
+import type { UserProfile } from './lib/supabase';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,6 +20,38 @@ function App() {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Check for existing session on component mount
+  React.useEffect(() => {
+    const checkSession = async () => {
+      const userData = await authService.getCurrentUser();
+      if (userData) {
+        setCurrentUser(userData.user);
+        setUserProfile(userData.profile);
+        setIsAuthenticated(true);
+      }
+    };
+
+    checkSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const userData = await authService.getCurrentUser();
+        if (userData) {
+          setCurrentUser(userData.user);
+          setUserProfile(userData.profile);
+          setIsAuthenticated(true);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setCurrentUser(null);
+        setUserProfile(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,12 +94,55 @@ function App() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Handle form submission here
-      console.log('Form submitted:', formData);
-      setIsAuthenticated(true);
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      let result;
+      
+      if (isSignUp) {
+        // Sign up new user
+        result = await authService.signUp({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.name
+        });
+      } else {
+        // Sign in existing user
+        result = await authService.signIn({
+          email: formData.email,
+          password: formData.password
+        });
+      }
+
+      if (result.success) {
+        setCurrentUser(result.user);
+        setUserProfile(result.profile || null);
+        setIsAuthenticated(true);
+        
+        // Clear form data
+        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+      } else {
+        // Handle authentication errors
+        if (result.error?.includes('Invalid login credentials')) {
+          setErrors({ email: 'Invalid email or password' });
+        } else if (result.error?.includes('User already registered')) {
+          setErrors({ email: 'An account with this email already exists' });
+        } else if (result.error?.includes('Password should be at least 6 characters')) {
+          setErrors({ password: 'Password must be at least 6 characters' });
+        } else {
+          setErrors({ general: result.error || 'An error occurred. Please try again.' });
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      setErrors({ general: 'An unexpected error occurred. Please try again.' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,15 +154,25 @@ function App() {
     setShowConfirmPassword(false);
   };
 
-  const handleSignOut = () => {
-    setIsAuthenticated(false);
-    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-    setErrors({});
-    setIsSignUp(false);
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    try {
+      await authService.signOut();
+      setCurrentUser(null);
+      setUserProfile(null);
+      setIsAuthenticated(false);
+      setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+      setErrors({});
+      setIsSignUp(false);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isAuthenticated) {
-    return <ChatBot onSignOut={handleSignOut} />;
+    return <ChatBot onSignOut={handleSignOut} user={currentUser} profile={userProfile} />;
   }
 
   return (
@@ -322,12 +412,29 @@ function App() {
               )}
 
               {/* Submit Button */}
+            {/* General Error Message */}
+            {errors.general && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4">
+                <p className="text-red-400 text-sm text-center">{errors.general}</p>
+              </div>
+            )}
+
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:shadow-orange-500/25"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {isSignUp ? 'Start Your Adventure' : 'Access Assistant'}
-                <ArrowRight className="w-5 h-5" />
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                  </>
+                ) : (
+                  <>
+                    {isSignUp ? 'Start Your Adventure' : 'Access Assistant'}
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
               </button>
             </form>
           </div>
