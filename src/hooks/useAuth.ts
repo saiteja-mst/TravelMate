@@ -11,30 +11,22 @@ export const useAuth = () => {
     // Check if user is already authenticated
     const checkAuth = async () => {
       try {
+        setLoading(true);
         const { data: { session } } = await authService.supabase.auth.getSession();
         if (session?.user) {
-          try {
-            let userProfile = await authService.getUserProfile(session.user.id);
-            if (!userProfile) {
-              userProfile = await authService.createUserProfile(session.user);
-            }
-            setUser(userProfile);
-          } catch (profileError) {
-            console.warn('Profile creation failed, using basic user data:', profileError);
-            // Create a basic user profile from auth data
-            const basicProfile = {
-              id: session.user.id,
-              email: session.user.email || '',
-              full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
-              avatar_url: session.user.user_metadata?.avatar_url || null,
-              created_at: session.user.created_at || new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              last_login: new Date().toISOString(),
-              is_active: true,
-              preferences: {}
-            };
-            setUser(basicProfile);
-          }
+          // Create a basic user profile from auth data
+          const basicProfile: UserProfile = {
+            id: session.user.id,
+            email: session.user.email || '',
+            full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+            avatar_url: session.user.user_metadata?.avatar_url || null,
+            created_at: session.user.created_at || new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            last_login: new Date().toISOString(),
+            is_active: true,
+            preferences: {}
+          };
+          setUser(basicProfile);
         } else {
           setUser(null);
         }
@@ -50,34 +42,23 @@ export const useAuth = () => {
 
     // Listen to auth state changes
     const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      setLoading(true);
       if (session?.user) {
-        try {
-          let userProfile = await authService.getUserProfile(session.user.id);
-          if (!userProfile) {
-            userProfile = await authService.createUserProfile(session.user);
-          }
-          setUser(userProfile);
-        } catch (profileError) {
-          console.warn('Profile handling failed during auth change:', profileError);
-          // Create a basic user profile from auth data
-          const basicProfile = {
-            id: session.user.id,
-            email: session.user.email || '',
-            full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
-            avatar_url: session.user.user_metadata?.avatar_url || null,
-            created_at: session.user.created_at || new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            last_login: new Date().toISOString(),
-            is_active: true,
-            preferences: {}
-          };
-          setUser(basicProfile);
-        }
+        // Create a basic user profile from auth data
+        const basicProfile: UserProfile = {
+          id: session.user.id,
+          email: session.user.email || '',
+          full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+          avatar_url: session.user.user_metadata?.avatar_url || null,
+          created_at: session.user.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          last_login: new Date().toISOString(),
+          is_active: true,
+          preferences: {}
+        };
+        setUser(basicProfile);
       } else {
         setUser(null);
       }
-      setLoading(false);
       setError(null);
     });
 
@@ -98,7 +79,19 @@ export const useAuth = () => {
         return { success: false, error: result.error };
       }
       
-      setUser(result.user);
+      // Create basic profile for immediate use
+      const basicProfile: UserProfile = {
+        id: result.user?.id || '',
+        email: email,
+        full_name: fullName || email.split('@')[0],
+        avatar_url: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        is_active: true,
+        preferences: {}
+      };
+      setUser(basicProfile);
       return { success: true, user: result.user };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Signup failed';
@@ -121,7 +114,19 @@ export const useAuth = () => {
         return { success: false, error: result.error };
       }
       
-      setUser(result.user);
+      // Create basic profile for immediate use
+      const basicProfile: UserProfile = {
+        id: result.user?.id || '',
+        email: email,
+        full_name: result.user?.full_name || email.split('@')[0],
+        avatar_url: result.user?.avatar_url || null,
+        created_at: result.user?.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+        is_active: true,
+        preferences: {}
+      };
+      setUser(basicProfile);
       return { success: true, user: result.user };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Signin failed';
@@ -133,7 +138,6 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    setLoading(true);
     setError(null);
     
     try {
@@ -150,15 +154,12 @@ export const useAuth = () => {
       const errorMessage = err instanceof Error ? err.message : 'Signout failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
     }
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!user) return { success: false, error: 'No user logged in' };
     
-    setLoading(true);
     setError(null);
     
     try {
@@ -174,8 +175,6 @@ export const useAuth = () => {
       const errorMessage = err instanceof Error ? err.message : 'Profile update failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
     }
   };
 
