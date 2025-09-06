@@ -196,7 +196,7 @@ function App() {
             {/* Mode Toggle */}
             <div className="flex bg-white/10 backdrop-blur-sm rounded-2xl p-1 mb-4 border border-white/10">
               <button
-                onClick={() => !isSignUp && toggleMode()}
+                onClick={() => isSignUp && toggleMode()}
                 className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                   !isSignUp 
                     ? 'bg-gradient-to-r from-orange-500 to-teal-500 text-white shadow-lg shadow-orange-500/25' 
@@ -206,7 +206,7 @@ function App() {
                 Sign In
               </button>
               <button
-                onClick={() => isSignUp && toggleMode()}
+                onClick={() => !isSignUp && toggleMode()}
                 className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                   isSignUp 
                     ? 'bg-gradient-to-r from-orange-500 to-teal-500 text-white shadow-lg shadow-orange-500/25' 
