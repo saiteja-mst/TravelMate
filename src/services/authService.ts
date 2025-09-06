@@ -389,16 +389,6 @@ class AuthService {
     try {
       // Generate 6-digit OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-      // Store OTP in localStorage temporarily
-      const otpData = {
-        email,
-        otp,
-        expiresAt: expiresAt.toISOString(),
-        verified: false
-      };
-      localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
 
       try {
         // Send OTP via Supabase Edge Function
@@ -408,27 +398,19 @@ class AuthService {
 
         if (error) {
           console.error('Edge function error:', error);
-          // Fallback: Show OTP in alert for demo
-          alert(`Demo Mode: Your password reset OTP is: ${otp}\n\nEmail service is not configured. In production, this would be sent to your email.`);
-          return { success: true };
-        } else if (data?.demo_mode) {
-          // Demo mode - show OTP
-          alert(`Demo Mode: Your password reset OTP is: ${data.demo_otp}\n\nIn production, this would be sent to your email address.`);
+          return { success: false, error: 'Failed to send OTP email. Please try again.' };
+        } else if (data?.email_sent) {
+          // Email was sent successfully
+          console.log('OTP email sent successfully to:', email);
           return { success: true };
         } else {
-          // Production mode - email was sent
-          console.log('OTP email sent successfully');
+          console.log('OTP email sent successfully to:', email);
           return { success: true };
         }
       } catch (emailError) {
         console.error('Email sending error:', emailError);
-        // Show OTP in alert as fallback
-        alert(`Demo Mode: Your password reset OTP is: ${otp}\n\nEmail service unavailable. Use this OTP to continue.`);
-        return { success: true };
+        return { success: false, error: 'Email service unavailable. Please try again later.' };
       }
-
-      console.log('OTP generated and stored successfully for:', email);
-      return { success: true };
     } catch (error) {
       console.error('Send OTP error:', error);
       return { 
@@ -440,28 +422,29 @@ class AuthService {
 
   async verifyPasswordResetOTP(email: string, otp: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const storedData = localStorage.getItem(`password_reset_${email}`);
+      // Verify OTP from database
+      const { data, error } = await supabase
+        .from('password_reset_otps')
+        .select('*')
+        .eq('email', email)
+        .eq('otp', otp)
+        .eq('used', false)
+        .gt('expires_at', new Date().toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
       
-      if (!storedData) {
-        return { success: false, error: 'No OTP found. Please request a new one.' };
+      if (error) {
+        console.error('Database error verifying OTP:', error);
+        return { success: false, error: 'Failed to verify OTP. Please try again.' };
       }
 
-      const otpData = JSON.parse(storedData);
-      const now = new Date();
-      const expiresAt = new Date(otpData.expiresAt);
-
-      if (now > expiresAt) {
-        localStorage.removeItem(`password_reset_${email}`);
-        return { success: false, error: 'OTP has expired. Please request a new one.' };
+      if (!data) {
+        return { success: false, error: 'Invalid or expired OTP. Please try again.' };
       }
 
-      if (otpData.otp !== otp) {
-        return { success: false, error: 'Invalid OTP. Please try again.' };
-      }
-
-      // Mark OTP as verified
-      otpData.verified = true;
-      localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
+      // OTP is valid
+      console.log('OTP verified successfully for:', email);
 
       return { success: true };
     } catch (error) {
@@ -475,24 +458,31 @@ class AuthService {
 
   async resetPassword(email: string, otp: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const storedData = localStorage.getItem(`password_reset_${email}`);
+      // Verify OTP is still valid and mark as used
+      const { data: otpData, error: verifyError } = await supabase
+        .from('password_reset_otps')
+        .select('*')
+        .eq('email', email)
+        .eq('otp', otp)
+        .eq('used', false)
+        .gt('expires_at', new Date().toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
       
-      if (!storedData) {
-        return { success: false, error: 'Invalid reset session. Please start over.' };
+      if (verifyError || !otpData) {
+        console.error('OTP verification failed:', verifyError);
+        return { success: false, error: 'Invalid or expired OTP. Please start over.' };
       }
 
-      const otpData = JSON.parse(storedData);
+      // Mark OTP as used
+      const { error: markUsedError } = await supabase
+        .from('password_reset_otps')
+        .update({ used: true })
+        .eq('id', otpData.id);
       
-      if (!otpData.verified || otpData.otp !== otp) {
-        return { success: false, error: 'Invalid or unverified OTP.' };
-      }
-
-      const now = new Date();
-      const expiresAt = new Date(otpData.expiresAt);
-
-      if (now > expiresAt) {
-        localStorage.removeItem(`password_reset_${email}`);
-        return { success: false, error: 'Reset session has expired. Please start over.' };
+      if (markUsedError) {
+        console.error('Failed to mark OTP as used:', markUsedError);
       }
 
       // Update password in Supabase Auth
@@ -502,21 +492,13 @@ class AuthService {
 
       if (updateError) {
         console.error('Password update error:', updateError);
-        
-        // If user is not signed in, we need to use admin API or create a temporary session
-        // For now, we'll store locally as fallback for demo purposes
-        const passwordData = {
-          email,
-          password: newPassword,
-          updatedAt: new Date().toISOString()
+        return { 
+          success: false, 
+          error: 'Failed to update password. Please try again or contact support.' 
         };
-        
-        localStorage.setItem(`user_password_${email}`, JSON.stringify(passwordData));
-        console.warn('Password stored locally for demo - in production, use server-side password reset');
       }
 
-      // Clean up OTP data
-      localStorage.removeItem(`password_reset_${email}`);
+      console.log('Password reset successfully for:', email);
 
       return { success: true };
     } catch (error) {

@@ -205,6 +205,9 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
         <p className="text-gray-300 text-sm">
           We've sent a 6-digit OTP to <span className="text-teal-400 font-semibold">{email}</span>
         </p>
+        <p className="text-gray-400 text-xs mt-2">
+          Please check your email inbox and spam folder
+        </p>
       </div>
 
       <div>
