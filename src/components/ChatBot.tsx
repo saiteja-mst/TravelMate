@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw } from 'lucide-react';
+import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe } from 'lucide-react';
 import OpenAI from 'openai';
+import TravelMateAILogo from './Logo';
 
 interface Message {
   id: string;
@@ -24,7 +25,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ onSignOut }) => {
     {
       id: '1',
       type: 'bot',
-      content: "Hey, Hi, an Amazing Human Being! \nCan we just start our journey with just a Hi to me please....",
+      content: "Hey Hi, an amazing Human Being, can we just start our journey with a warm nice greeting ?",
       timestamp: new Date()
     }
   ]);
@@ -188,7 +189,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       {
         id: '1',
         type: 'bot',
-        content: "Hey, Hi, an Amazing Human Being! \nCan we just start our journey with just a Hi to me please....",
+        content: "Hey Hi, an amazing Human Being, can we just start our journey with a warm nice greeting ?",
         timestamp: new Date()
       }
     ]);
@@ -207,32 +208,64 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex flex-col relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Animated particles */}
+        <div className="absolute inset-0">
+          {[...Array(30)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-teal-400 rounded-full opacity-20 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 4}s`
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Floating elements */}
+        <div className="absolute top-20 right-20 opacity-10 animate-spin" style={{ animationDuration: '30s' }}>
+          <Globe className="w-32 h-32 text-teal-400" />
+        </div>
+        <div className="absolute bottom-20 left-20 opacity-10 animate-bounce" style={{ animationDuration: '8s' }}>
+          <MapPin className="w-20 h-20 text-orange-400" />
+        </div>
+        
+        {/* Dynamic gradient orbs */}
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-gradient-to-br from-orange-500/20 to-teal-500/20 blur-3xl animate-pulse" style={{ animationDuration: '12s' }}></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
+      </div>
+
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-xl border-b border-sky-100/50 shadow-sm">
+      <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl relative z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center">
-              <Plane className="w-5 h-5 text-white transform rotate-45" />
-            </div>
+            <TravelMateAILogo className="w-16 h-16 hover:scale-110 transition-transform duration-300" />
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
-                TravelMate AI
+              <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
+                <span className="font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
+                  <span className="font-elegant font-semibold tracking-wide">Travel</span><span className="font-modern font-bold tracking-tight">Mate</span>
+                  <span className="text-sm ml-1 font-sans font-normal not-italic opacity-80">AI</span>
+                </span>
               </h1>
-              <p className="text-sm text-gray-600">Your Personal Travel Assistant</p>
+              <p className="text-sm text-gray-300">Your Personal Travel Assistant</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={clearChat}
-              className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-all duration-200"
+              className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
               title="Clear chat"
             >
               <RotateCcw className="w-5 h-5" />
             </button>
             <button
               onClick={onSignOut}
-              className="px-4 py-2 text-gray-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-all duration-200 text-sm font-medium"
+              className="px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 text-sm font-medium hover:scale-105"
             >
               Sign Out
             </button>
@@ -241,16 +274,16 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-hidden">
-        <div className="max-w-4xl mx-auto h-full flex flex-col">
-          <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10">
+          <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.type === 'bot' && (
-                  <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
                     <Bot className="w-5 h-5 text-white" />
                   </div>
                 )}
@@ -258,24 +291,24 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                 <div
                   className={`max-w-3xl rounded-2xl px-6 py-4 ${
                     message.type === 'user'
-                      ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white ml-12'
-                      : 'bg-white/90 backdrop-blur-sm border border-sky-100/50 shadow-sm'
-                  }`}
+                      ? 'bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white ml-12 shadow-xl hover:shadow-2xl transition-shadow duration-300'
+                      : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-white/15'
+                  } hover:scale-[1.02] transition-transform duration-200`}
                 >
                   <div className={`text-sm leading-relaxed ${
-                    message.type === 'user' ? 'text-white' : 'text-gray-800'
+                    message.type === 'user' ? 'text-white' : 'text-gray-100'
                   }`}>
                     {message.type === 'bot' ? formatMessageContent(message.content) : message.content}
                   </div>
                   <div className={`text-xs mt-2 ${
-                    message.type === 'user' ? 'text-sky-100' : 'text-gray-500'
+                    message.type === 'user' ? 'text-orange-100' : 'text-gray-400'
                   }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
 
                 {message.type === 'user' && (
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
                     <User className="w-5 h-5 text-white" />
                   </div>
                 )}
@@ -284,12 +317,12 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
             {isLoading && (
               <div className="flex gap-4 justify-start">
-                <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
-                <div className="bg-white/90 backdrop-blur-sm border border-sky-100/50 shadow-sm rounded-2xl px-6 py-4">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Sparkles className="w-4 h-4 animate-pulse" />
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl px-6 py-4 animate-pulse">
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <Sparkles className="w-4 h-4 animate-spin text-teal-400" />
                     <span className="text-sm">Creating your personalized itinerary...</span>
                   </div>
                 </div>
@@ -299,8 +332,11 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <div className="border-t border-sky-100/50 bg-white/90 backdrop-blur-xl p-4">
+        </div>
+        
+        {/* Input Area - Fixed at Bottom */}
+        <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
+          <div className="max-w-4xl mx-auto p-4">
             <div className="flex gap-4 items-end">
               <div className="flex-1">
                 <input
@@ -309,19 +345,18 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell me about your dream trip... Where would you like to go?"
-                  className="w-full px-6 py-4 bg-white/90 backdrop-blur-sm border border-sky-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-gray-800 placeholder-gray-500 shadow-sm"
+                  placeholder="Come on, let's deep-dive into your travel plan"
+                  className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 text-white placeholder-gray-300 shadow-xl hover:bg-white/15 transition-all duration-200"
                 />
               </div>
               <button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="p-4 bg-gradient-to-r from-sky-500 to-indigo-600 text-white rounded-2xl hover:from-sky-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
+                className="p-4 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-2xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-110 hover:shadow-orange-500/25"
               >
                 <Send className="w-5 h-5" />
               </button>
             </div>
-            
           </div>
         </div>
       </div>
