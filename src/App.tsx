@@ -132,17 +132,17 @@ function App() {
           <div className="p-8 pb-6">
             <div className="text-center mb-8">
               {/* Travel-themed logo */}
-              <div className="mx-auto mb-8 hover:scale-110 transition-transform duration-300 flex justify-center">
+              <div className="mx-auto mb-6 hover:scale-110 transition-transform duration-300 flex justify-center">
                 <TravelMateAILogo className="w-32 h-32" />
               </div>
               
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent mb-2 font-['Inter']">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent mb-1 font-['Inter']">
                 <span className="text-4xl font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
                   <span className="font-elegant font-semibold tracking-wide">Travel</span><span className="font-modern font-bold tracking-tight">Mate</span>
                   <span className="absolute -top-2 -right-3 text-xl animate-bounce" style={{ animationDuration: '3s' }}>✈</span>
                 </span>
               </h1>
-              <p className="text-lg font-semibold text-white mb-2">
+              <p className="text-lg font-semibold text-white mb-1">
                 {isSignUp ? 'Join Your Travel Assistant' : 'Welcome back, pretty user!'}
               </p>
               <p className="text-gray-300 text-sm">
@@ -154,7 +154,7 @@ function App() {
             </div>
 
             {/* Mode Toggle */}
-            <div className="flex bg-white/10 backdrop-blur-sm rounded-2xl p-1.5 mb-8 border border-white/10">
+            <div className="flex bg-white/10 backdrop-blur-sm rounded-2xl p-1.5 mb-6 border border-white/10">
               <button
                 onClick={() => !isSignUp && toggleMode()}
                 className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 ${
@@ -178,14 +178,14 @@ function App() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name Field (Sign Up Only) */}
               <div className={`transition-all duration-500 overflow-hidden ${
-                isSignUp ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'
+                isSignUp ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
               }`}>
                 {isSignUp && (
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-gray-200 mb-2">
+                    <label htmlFor="name" className="block text-sm font-semibold text-gray-200 mb-1.5">
                       Full Name
                     </label>
                     <div className="relative">
@@ -205,7 +205,7 @@ function App() {
                       />
                     </div>
                     {errors.name && (
-                      <p className="text-red-500 text-xs mt-2 ml-1">{errors.name}</p>
+                      <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.name}</p>
                     )}
                   </div>
                 )}
@@ -213,7 +213,7 @@ function App() {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-200 mb-2">
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-200 mb-1.5">
                   Email Address
                 </label>
                 <div className="relative">
@@ -233,13 +233,13 @@ function App() {
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-xs mt-2 ml-1">{errors.email}</p>
+                  <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.email}</p>
                 )}
               </div>
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-200 mb-2">
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-200 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
@@ -266,17 +266,17 @@ function App() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-xs mt-2 ml-1">{errors.password}</p>
+                  <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.password}</p>
                 )}
               </div>
 
               {/* Confirm Password Field (Sign Up Only) */}
               <div className={`transition-all duration-500 overflow-hidden ${
-                isSignUp ? 'max-h-28 opacity-100' : 'max-h-0 opacity-0'
+                isSignUp ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'
               }`}>
                 {isSignUp && (
                   <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-200 mb-2">
+                    <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-200 mb-1.5">
                       Confirm Password
                     </label>
                     <div className="relative">
@@ -303,7 +303,7 @@ function App() {
                       </button>
                     </div>
                     {errors.confirmPassword && (
-                      <p className="text-red-500 text-xs mt-2 ml-1">{errors.confirmPassword}</p>
+                      <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.confirmPassword}</p>
                     )}
                   </div>
                 )}
@@ -333,7 +333,7 @@ function App() {
           </div>
 
           {/* Footer */}
-          <div className="px-8 py-6 bg-gradient-to-r from-white/5 to-white/10 border-t border-white/10 backdrop-blur-sm">
+          <div className="px-8 py-4 bg-gradient-to-r from-white/5 to-white/10 border-t border-white/10 backdrop-blur-sm">
             <p className="text-center text-sm text-gray-300">
               {isSignUp ? 'Already part of our network?' : "New to TravelMate?"}{' '}
               <button
@@ -347,7 +347,7 @@ function App() {
         </div>
 
         {/* Trust Indicators */}
-        <div className="mt-8 text-center space-y-2">
+        <div className="mt-6 text-center space-y-1.5">
           <p className="text-xs text-gray-400 flex items-center justify-center gap-2">
             <Lock className="w-3 h-3" />
             Secured with enterprise-grade encryption
