@@ -13,15 +13,34 @@ export const useAuth = () => {
       try {
         const { data: { session } } = await authService.supabase.auth.getSession();
         if (session?.user) {
-          let userProfile = await authService.getUserProfile(session.user.id);
-          if (!userProfile) {
-            userProfile = await authService.createUserProfile(session.user);
+          try {
+            let userProfile = await authService.getUserProfile(session.user.id);
+            if (!userProfile) {
+              userProfile = await authService.createUserProfile(session.user);
+            }
+            setUser(userProfile);
+          } catch (profileError) {
+            console.warn('Profile creation failed, using basic user data:', profileError);
+            // Create a basic user profile from auth data
+            const basicProfile = {
+              id: session.user.id,
+              email: session.user.email || '',
+              full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+              avatar_url: session.user.user_metadata?.avatar_url || null,
+              created_at: session.user.created_at || new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              last_login: new Date().toISOString(),
+              is_active: true,
+              preferences: {}
+            };
+            setUser(basicProfile);
           }
-          setUser(userProfile);
+        } else {
+          setUser(null);
         }
       } catch (err) {
         console.error('Auth check error:', err);
-        // Don't set error for auth check failures, just continue as unauthenticated
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -31,12 +50,30 @@ export const useAuth = () => {
 
     // Listen to auth state changes
     const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+      setLoading(true);
       if (session?.user) {
-        let userProfile = await authService.getUserProfile(session.user.id);
-        if (!userProfile) {
-          userProfile = await authService.createUserProfile(session.user);
+        try {
+          let userProfile = await authService.getUserProfile(session.user.id);
+          if (!userProfile) {
+            userProfile = await authService.createUserProfile(session.user);
+          }
+          setUser(userProfile);
+        } catch (profileError) {
+          console.warn('Profile handling failed during auth change:', profileError);
+          // Create a basic user profile from auth data
+          const basicProfile = {
+            id: session.user.id,
+            email: session.user.email || '',
+            full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+            avatar_url: session.user.user_metadata?.avatar_url || null,
+            created_at: session.user.created_at || new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            last_login: new Date().toISOString(),
+            is_active: true,
+            preferences: {}
+          };
+          setUser(basicProfile);
         }
-        setUser(userProfile);
       } else {
         setUser(null);
       }
