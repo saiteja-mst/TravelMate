@@ -437,6 +437,26 @@ function App() {
 
         {/* Trust Indicators */}
         <div className="mt-4 text-center space-y-1">
+          {/* About the Assistant - Innovative Button */}
+          <div className="text-center mb-3">
+            <button
+              type="button"
+              onClick={handleAboutPage}
+              className="group relative inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 via-teal-500/20 to-orange-500/20 hover:from-purple-500/30 hover:via-teal-500/30 hover:to-orange-500/30 border border-white/20 hover:border-white/40 rounded-xl text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-teal-500/25"
+            >
+              <div className="relative">
+                <Sparkles className="w-4 h-4 text-teal-400 group-hover:animate-spin transition-all duration-300" />
+                <div className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-75 transition-opacity duration-300">
+                  <Sparkles className="w-4 h-4 text-orange-400" />
+                </div>
+              </div>
+              <span className="relative">
+                About the Assistant
+                <span className="absolute -top-1 -right-2 text-xs animate-bounce opacity-0 group-hover:opacity-100 transition-opacity duration-300">✨</span>
+              </span>
+            </button>
+          </div>
+          
           <p className="text-xs text-gray-400 flex items-center justify-center gap-2">
             <Lock className="w-3 h-3" />
             Secured with enterprise-grade encryption
