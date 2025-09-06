@@ -324,12 +324,21 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
                 messages.length <= 1 || isSaving
                   ? 'text-gray-600 cursor-not-allowed'
-                  : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
+                  : 'text-gray-400 hover:text-teal-400 hover:bg-gradient-to-r hover:from-orange-500/20 hover:via-teal-500/20 hover:to-blue-500/20'
               }`}
               title="Save chat"
             >
               {isSaving ? (
-                <RotateCcw className="w-5 h-5 animate-spin" />
+                <div className="relative">
+                  <Sparkles className="w-5 h-5 animate-pulse text-teal-400" />
+                  <div className="absolute inset-0 animate-ping">
+                    <Sparkles className="w-5 h-5 text-orange-400 opacity-75" />
+                  </div>
+                  <div className="absolute inset-0 animate-bounce" style={{ animationDuration: '1s' }}>
+                    <div className="w-1 h-1 bg-teal-400 rounded-full absolute top-0 right-0 animate-pulse" />
+                    <div className="w-1 h-1 bg-orange-400 rounded-full absolute bottom-0 left-0 animate-pulse" style={{ animationDelay: '0.5s' }} />
+                  </div>
+                </div>
               ) : (
                 <Save className="w-5 h-5" />
               )}
