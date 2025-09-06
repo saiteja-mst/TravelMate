@@ -27,39 +27,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
-
-  // Handle mouse enter with immediate expansion
-  const handleMouseEnter = () => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
-    }
-    setIsExpanded(true);
-  };
-
-  // Handle mouse leave with delay
-  const handleMouseLeave = () => {
-    const timeout = setTimeout(() => {
-      setIsExpanded(false);
-    }, 300);
-    setHoverTimeout(timeout);
-  };
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-      }
-    };
-  }, [hoverTimeout]);
 
   useEffect(() => {
-    if (isOpen) {
-      loadConversations();
-    }
-  }, [user.id, isOpen]);
+    loadConversations();
+  }, [user.id]);
 
   const loadConversations = async () => {
     try {
@@ -146,30 +117,41 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     return date.toLocaleDateString();
   };
 
+  const handleMouseEnter = () => {
+    setIsExpanded(true);
+  };
+
+  const handleMouseLeave = () => {
+    // Add a small delay to prevent flickering
+    setTimeout(() => {
+      setIsExpanded(false);
+    }, 200);
+  };
+
   return (
     <div 
-      className={`h-full bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0 ${
+      className={`h-full bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0 relative ${
         isExpanded ? 'w-80' : 'w-16'
       }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Collapsed State */}
-      {!isExpanded && (
+      {/* Collapsed State - Always visible */}
+      <div className={`absolute inset-0 transition-opacity duration-300 ${isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="h-full w-16 flex flex-col items-center py-4">
-          <div className="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 cursor-pointer">
+          <div className="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 cursor-pointer mb-4">
             <MessageSquare className="w-6 h-6 text-teal-400" />
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-60">
-            {[...Array(3)].map((_, i) => (
+          <div className="flex-1 flex flex-col items-center justify-center gap-3 opacity-40">
+            {[...Array(5)].map((_, i) => (
               <div key={i} className="w-8 h-2 bg-white/20 rounded-full"></div>
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Expanded State */}
-      {isExpanded && (
+      <div className={`absolute inset-0 transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/20">
@@ -309,7 +291,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             </p>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
