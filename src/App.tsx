@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
 import TravelMateAILogo from './components/Logo';
+import ForgotPassword from './components/ForgotPassword';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
   const { user, loading, error: authError, signUp, signIn, signOut, isAuthenticated } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -100,6 +102,7 @@ function App() {
     setErrors({});
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setShowForgotPassword(false);
   };
 
   const handleSignOut = async () => {
@@ -107,6 +110,18 @@ function App() {
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     setErrors({});
     setIsSignUp(false);
+  };
+
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true);
+    setErrors({});
+  };
+
+  const handleBackToSignIn = () => {
+    setShowForgotPassword(false);
+    setIsSignUp(false);
+    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+    setErrors({});
   };
 
   // Show loading state
@@ -123,6 +138,10 @@ function App() {
 
   if (isAuthenticated) {
     return <ChatBot user={user} onSignOut={handleSignOut} />;
+  }
+
+  if (showForgotPassword) {
+    return <ForgotPassword onBack={handleBackToSignIn} />;
   }
 
   return (
@@ -354,6 +373,7 @@ function App() {
                 <div className="flex justify-end">
                   <button
                     type="button"
+                    onClick={handleForgotPassword}
                     className="text-sm text-teal-400 hover:text-teal-300 font-medium transition-colors hover:underline"
                   >
                     Forgot password?

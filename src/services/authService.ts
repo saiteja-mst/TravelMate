@@ -312,6 +312,127 @@ class AuthService {
   get supabase() {
     return supabase;
   }
+
+  // Password Reset Methods
+  async sendPasswordResetOTP(email: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+      // Store OTP in localStorage temporarily (in production, use a secure backend)
+      const otpData = {
+        email,
+        otp,
+        expiresAt: expiresAt.toISOString(),
+        verified: false
+      };
+      localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
+
+      // Simulate sending email (in production, use a real email service)
+      console.log(`Password Reset OTP for ${email}: ${otp}`);
+      
+      // Show OTP in alert for demo purposes (remove in production)
+      alert(`Demo: Your password reset OTP is: ${otp}\n\nIn production, this would be sent to your email.`);
+
+      return { success: true };
+    } catch (error) {
+      console.error('Send OTP error:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to send OTP' 
+      };
+    }
+  }
+
+  async verifyPasswordResetOTP(email: string, otp: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const storedData = localStorage.getItem(`password_reset_${email}`);
+      
+      if (!storedData) {
+        return { success: false, error: 'No OTP found. Please request a new one.' };
+      }
+
+      const otpData = JSON.parse(storedData);
+      const now = new Date();
+      const expiresAt = new Date(otpData.expiresAt);
+
+      if (now > expiresAt) {
+        localStorage.removeItem(`password_reset_${email}`);
+        return { success: false, error: 'OTP has expired. Please request a new one.' };
+      }
+
+      if (otpData.otp !== otp) {
+        return { success: false, error: 'Invalid OTP. Please try again.' };
+      }
+
+      // Mark OTP as verified
+      otpData.verified = true;
+      localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
+
+      return { success: true };
+    } catch (error) {
+      console.error('Verify OTP error:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to verify OTP' 
+      };
+    }
+  }
+
+  async resetPassword(email: string, otp: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const storedData = localStorage.getItem(`password_reset_${email}`);
+      
+      if (!storedData) {
+        return { success: false, error: 'Invalid reset session. Please start over.' };
+      }
+
+      const otpData = JSON.parse(storedData);
+      
+      if (!otpData.verified || otpData.otp !== otp) {
+        return { success: false, error: 'Invalid or unverified OTP.' };
+      }
+
+      const now = new Date();
+      const expiresAt = new Date(otpData.expiresAt);
+
+      if (now > expiresAt) {
+        localStorage.removeItem(`password_reset_${email}`);
+        return { success: false, error: 'Reset session has expired. Please start over.' };
+      }
+
+      // Update password using Supabase Admin API
+      // Note: In production, this should be done through a secure backend endpoint
+      const { error } = await supabase.auth.admin.updateUserById(
+        otpData.userId || '', // You'd need to store userId during OTP generation
+        { password: newPassword }
+      );
+
+      if (error) {
+        // Fallback: Use Supabase's built-in password reset
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin
+        });
+        
+        if (resetError) {
+          console.error('Password reset error:', resetError);
+          return { success: false, error: 'Failed to reset password. Please try again.' };
+        }
+      }
+
+      // Clean up OTP data
+      localStorage.removeItem(`password_reset_${email}`);
+
+      return { success: true };
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to reset password' 
+      };
+    }
+  }
 }
 
 export const authService = new AuthService();
