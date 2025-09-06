@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
 import TravelMateAILogo from './components/Logo';
+import AboutPage from './components/AboutPage';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
   const { user, loading, error: authError, signUp, signIn, signOut, isAuthenticated } = useAuth();
-  const [currentPage, setCurrentPage] = useState<'auth' | 'chat'>('auth');
+  const [currentPage, setCurrentPage] = useState<'auth' | 'chat' | 'about'>('auth');
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -113,6 +114,14 @@ function App() {
     setCurrentPage('auth');
   };
 
+  const handleAboutPage = () => {
+    setCurrentPage('about');
+  };
+
+  const handleBackToSignIn = () => {
+    setCurrentPage('auth');
+  };
+
   // Show loading state
   if (loading) {
     return (
@@ -123,6 +132,10 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  if (currentPage === 'about') {
+    return <AboutPage onBack={handleBackToSignIn} />;
   }
 
   if (isAuthenticated) {
@@ -366,6 +379,17 @@ function App() {
                   </button>
                 </div>
               )}
+
+              {/* About the Assistant Button */}
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleAboutPage}
+                  className="text-sm text-gray-400 hover:text-teal-400 font-medium transition-colors hover:underline"
+                >
+                  About the Assistant
+                </button>
+              </div>
 
               {/* Global Error Message */}
               {(errors.submit || authError) && (
