@@ -85,7 +85,9 @@ const AboutPage: React.FC<AboutPageProps> = ({ onBack }) => {
           <div className="text-center mb-16">
             <div className="relative inline-block mb-8">
               <div className="relative">
-                <TravelMateAILogo className="w-32 h-32 mx-auto animate-float" />
+                <div className="w-32 h-32 mx-auto bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-full flex items-center justify-center animate-float shadow-2xl">
+                  <Sparkles className="w-16 h-16 text-white animate-pulse" />
+                </div>
                 <div className="absolute -top-4 -right-4 animate-bounce">
                   <Sparkles className="w-8 h-8 text-orange-400" />
                 </div>
