@@ -76,7 +76,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onBack }) => {
             </div>
           </div>
 
-          <div className="w-32 flex-shrink-0"></div> {/* Spacer for balance */
+          <div className="w-32 flex-shrink-0"></div> {/* Spacer for balance */}
         </div>
       </div>
 
