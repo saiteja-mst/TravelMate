@@ -10,17 +10,22 @@ const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 
       >
         {/* Gradient Definitions */}
         <defs>
-          <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FF6B35" />
-            <stop offset="50%" stopColor="#06D6A0" />
+          <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#06D6A0" />
+            <stop offset="50%" stopColor="#FF6B35" />
             <stop offset="100%" stopColor="#1E3A8A" />
           </linearGradient>
-          <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#40E0D0" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#FF8E53" stopOpacity="0.8" />
+          <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#40E0D0" />
+            <stop offset="100%" stopColor="#FF8E53" />
           </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <radialGradient id="coreGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#40E0D0" stopOpacity="1" />
+            <stop offset="70%" stopColor="#06D6A0" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#1E3A8A" stopOpacity="0.6" />
+          </radialGradient>
+          <filter id="softGlow">
+            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
             <feMerge> 
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
@@ -28,16 +33,16 @@ const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 
           </filter>
         </defs>
 
-        {/* Outer Circle - AI Neural Network Ring */}
+        {/* Outer Ring - Subtle Travel Path */}
         <circle
           cx="50"
           cy="50"
-          r="45"
+          r="42"
           fill="none"
-          stroke="url(#aiGradient)"
-          strokeWidth="2"
-          strokeDasharray="5,3"
-          opacity="0.6"
+          stroke="url(#primaryGradient)"
+          strokeWidth="1.5"
+          strokeDasharray="8,4"
+          opacity="0.4"
         >
           <animateTransform
             attributeName="transform"
@@ -45,98 +50,131 @@ const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 
             type="rotate"
             from="0 50 50"
             to="360 50 50"
-            dur="20s"
+            dur="30s"
             repeatCount="indefinite"
           />
         </circle>
 
-        {/* AI Brain/Circuit Pattern */}
-        <g fill="url(#aiGradient)" opacity="0.8">
-          {/* Central AI Core */}
-          <circle cx="50" cy="50" r="8" fill="url(#glowGradient)" filter="url(#glow)" />
-          
-          {/* Neural Network Nodes */}
-          <circle cx="35" cy="35" r="3" />
-          <circle cx="65" cy="35" r="3" />
-          <circle cx="35" cy="65" r="3" />
-          <circle cx="65" cy="65" r="3" />
-          <circle cx="25" cy="50" r="2.5" />
-          <circle cx="75" cy="50" r="2.5" />
-          <circle cx="50" cy="25" r="2.5" />
-          <circle cx="50" cy="75" r="2.5" />
+        {/* AI Brain Core */}
+        <circle 
+          cx="50" 
+          cy="50" 
+          r="18" 
+          fill="url(#coreGradient)" 
+          filter="url(#softGlow)"
+          opacity="0.9"
+        >
+          <animate
+            attributeName="r"
+            values="18;20;18"
+            dur="4s"
+            repeatCount="indefinite"
+          />
+        </circle>
 
-          {/* Connection Lines */}
-          <line x1="42" y1="42" x2="50" y2="50" stroke="url(#aiGradient)" strokeWidth="1.5" opacity="0.7" />
-          <line x1="58" y1="42" x2="50" y2="50" stroke="url(#aiGradient)" strokeWidth="1.5" opacity="0.7" />
-          <line x1="42" y1="58" x2="50" y2="50" stroke="url(#aiGradient)" strokeWidth="1.5" opacity="0.7" />
-          <line x1="58" y1="58" x2="50" y2="50" stroke="url(#aiGradient)" strokeWidth="1.5" opacity="0.7" />
-          <line x1="27.5" y1="50" x2="42" y2="50" stroke="url(#aiGradient)" strokeWidth="1" opacity="0.5" />
-          <line x1="72.5" y1="50" x2="58" y2="50" stroke="url(#aiGradient)" strokeWidth="1" opacity="0.5" />
-          <line x1="50" y1="27.5" x2="50" y2="42" stroke="url(#aiGradient)" strokeWidth="1" opacity="0.5" />
-          <line x1="50" y1="72.5" x2="50" y2="58" stroke="url(#aiGradient)" strokeWidth="1" opacity="0.5" />
+        {/* Central AI Symbol */}
+        <g transform="translate(50, 50)" fill="white" opacity="0.9">
+          {/* AI Circuit Pattern */}
+          <circle cx="0" cy="0" r="3" fill="white" />
+          <rect x="-1" y="-8" width="2" height="6" rx="1" />
+          <rect x="-1" y="2" width="2" height="6" rx="1" />
+          <rect x="-8" y="-1" width="6" height="2" ry="1" />
+          <rect x="2" y="-1" width="6" height="2" ry="1" />
+          
+          {/* Corner nodes */}
+          <circle cx="-6" cy="-6" r="1.5" />
+          <circle cx="6" cy="-6" r="1.5" />
+          <circle cx="-6" cy="6" r="1.5" />
+          <circle cx="6" cy="6" r="1.5" />
         </g>
 
-        {/* Travel Elements */}
-        <g fill="url(#glowGradient)">
-          {/* Airplane Path */}
-          <path
-            d="M20 30 L25 28 L30 30 L28 32 L32 35 L30 37 L25 35 L20 37 Z"
-            transform="rotate(45 25 32)"
-            opacity="0.9"
-          >
-            <animateTransform
-              attributeName="transform"
-              attributeType="XML"
-              type="rotate"
-              values="45 25 32; 50 25 32; 45 25 32"
-              dur="3s"
-              repeatCount="indefinite"
+        {/* Travel Elements - Minimalist */}
+        <g fill="url(#accentGradient)" opacity="0.8">
+          {/* Stylized Airplane */}
+          <g transform="translate(25, 25)">
+            <path
+              d="M0 2 L8 0 L10 2 L8 4 L12 6 L10 8 L8 6 L0 8 L2 4 Z"
+              transform="scale(0.8) rotate(45)"
+            >
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                values="45; 50; 45"
+                dur="6s"
+                repeatCount="indefinite"
+              />
+            </path>
+          </g>
+
+          {/* Modern Location Pin */}
+          <g transform="translate(70, 70)">
+            <path
+              d="M5 0 C7.5 0 10 2.5 10 5 C10 8 5 15 5 15 C5 15 0 8 0 5 C0 2.5 2.5 0 5 0 Z"
+              transform="scale(0.7)"
             />
-          </path>
+            <circle cx="3.5" cy="3.5" r="1.5" fill="white" />
+          </g>
 
-          {/* Location Pin */}
-          <path
-            d="M75 65 C75 62 77 60 80 60 C83 60 85 62 85 65 C85 68 80 75 80 75 C80 75 75 68 75 65 Z"
-            opacity="0.8"
-          />
-          <circle cx="80" cy="65" r="2" fill="#FEFEFE" />
-
-          {/* Compass */}
-          <g transform="translate(70, 25)">
-            <circle cx="5" cy="5" r="6" fill="none" stroke="url(#aiGradient)" strokeWidth="1" opacity="0.6" />
-            <polygon points="5,2 6,5 5,8 4,5" fill="url(#glowGradient)" opacity="0.8" />
+          {/* Compass Rose */}
+          <g transform="translate(75, 25)">
+            <g transform="scale(0.6)">
+              <polygon points="5,0 6,4 5,8 4,4" fill="url(#accentGradient)" />
+              <polygon points="0,5 4,6 8,5 4,4" fill="url(#accentGradient)" opacity="0.6" />
+              <circle cx="5" cy="5" r="1" fill="white" />
+            </g>
             <animateTransform
               attributeName="transform"
               attributeType="XML"
               type="rotate"
-              from="0 75 30"
-              to="360 75 30"
-              dur="15s"
+              from="0 75 25"
+              to="360 75 25"
+              dur="20s"
               repeatCount="indefinite"
             />
           </g>
         </g>
 
-        {/* Pulsing Effect */}
+        {/* Subtle Data Flow Lines */}
+        <g stroke="url(#primaryGradient)" strokeWidth="1" fill="none" opacity="0.3">
+          <path d="M30 30 Q50 20 70 30" strokeDasharray="2,3">
+            <animate
+              attributeName="stroke-dashoffset"
+              values="0;10;0"
+              dur="3s"
+              repeatCount="indefinite"
+            />
+          </path>
+          <path d="M30 70 Q50 80 70 70" strokeDasharray="2,3">
+            <animate
+              attributeName="stroke-dashoffset"
+              values="0;-10;0"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </g>
+
+        {/* Outer Glow Effect */}
         <circle
           cx="50"
           cy="50"
-          r="8"
+          r="22"
           fill="none"
-          stroke="url(#glowGradient)"
-          strokeWidth="1"
-          opacity="0.4"
+          stroke="url(#accentGradient)"
+          strokeWidth="0.5"
+          opacity="0.3"
         >
           <animate
             attributeName="r"
-            values="8;12;8"
-            dur="2s"
+            values="22;26;22"
+            dur="3s"
             repeatCount="indefinite"
           />
           <animate
             attributeName="opacity"
-            values="0.4;0.1;0.4"
-            dur="2s"
+            values="0.3;0.1;0.3"
+            dur="3s"
             repeatCount="indefinite"
           />
         </circle>
