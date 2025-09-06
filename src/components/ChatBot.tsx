@@ -102,7 +102,7 @@ Stage G - Confirmation:
 - Confirm output format preference
 
 Rules:
-- Don't overwhelm with too many questions at once (2-3 max)
+- Don't overwhelm with too many questions at once (1-2 max)
 - Always adapt next question to user's last response
 - Confirm understanding before finalizing itinerary
 - Summarize inputs in clear human language
