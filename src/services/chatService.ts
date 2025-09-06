@@ -156,6 +156,59 @@ class ChatService {
     }
   }
 
+  // Save messages to an existing conversation
+  async saveMessagesToConversation(conversationId: string, messages: any[]): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('chat_messages')
+        .insert(messages);
+
+      if (error) {
+        console.error('Error saving messages to conversation:', error);
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Save messages to conversation error:', error);
+      throw error;
+    }
+  }
+
+  // Delete all messages for a conversation
+  async deleteConversationMessages(conversationId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('chat_messages')
+        .delete()
+        .eq('conversation_id', conversationId);
+
+      if (error) {
+        console.error('Error deleting conversation messages:', error);
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Delete conversation messages error:', error);
+      throw error;
+    }
+  }
+
+  // Update conversation timestamp
+  async updateConversationTimestamp(conversationId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('chat_conversations')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', conversationId);
+
+      if (error) {
+        console.error('Error updating conversation timestamp:', error);
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Update conversation timestamp error:', error);
+      throw error;
+    }
+  }
+
   // Generate a title from the first user message
   private generateTitle(messages: Message[]): string {
     const firstUserMessage = messages.find(msg => msg.type === 'user');

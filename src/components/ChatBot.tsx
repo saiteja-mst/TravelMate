@@ -30,8 +30,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [sidebarKey, setSidebarKey] = useState(0);
   const [showChatHistory, setShowChatHistory] = useState(true);
   const [showChatBot, setShowChatBot] = useState(true);
@@ -44,7 +43,64 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
 
   useEffect(() => {
     scrollToBottom();
+    // Auto-save chat when messages change (but not on initial load)
+    if (messages.length > 1) {
+      autoSaveChat();
+    }
   }, [messages]);
+
+  const autoSaveChat = async () => {
+    if (!user || messages.length <= 1 || isAutoSaving) return;
+
+    setIsAutoSaving(true);
+    try {
+      if (currentConversationId) {
+        // Update existing conversation
+        await updateExistingConversation();
+      } else {
+        // Create new conversation
+        const conversation = await chatService.saveConversation(user.id, messages);
+        if (conversation) {
+          setCurrentConversationId(conversation.id);
+          // Force sidebar to refresh and show the new conversation
+          setSidebarKey(prev => prev + 1);
+        }
+      }
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+      // Silently fail for auto-save to not interrupt user experience
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
+
+  const updateExistingConversation = async () => {
+    if (!user || !currentConversationId) return;
+
+    try {
+      // Delete existing messages for this conversation
+      await chatService.deleteConversationMessages(currentConversationId);
+      
+      // Save all current messages
+      const messagesToInsert = messages.map(msg => ({
+        conversation_id: currentConversationId,
+        type: msg.type,
+        content: msg.content,
+        timestamp: msg.timestamp.toISOString()
+      }));
+
+      await chatService.saveMessagesToConversation(currentConversationId, messagesToInsert);
+      
+      // Update conversation timestamp
+      await chatService.updateConversationTimestamp(currentConversationId);
+      
+      // Refresh sidebar to show updated conversation
+      setSidebarKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to update existing conversation:', error);
+      throw error;
+    }
+  };
 
   const generateItinerary = async (userInput: string): Promise<string> => {
     try {
@@ -194,6 +250,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
   };
 
   const startNewChat = () => {
+    setCurrentConversationId(null);
     setMessages([
       {
         id: '1',
@@ -202,34 +259,21 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         timestamp: new Date()
       }
     ]);
-    setSaveSuccess(false);
   };
 
   const handleSaveChat = async () => {
-    if (!user || messages.length <= 1 || isSaving) return;
+    // Manual save is now just a trigger for auto-save
+    await autoSaveChat();
+  };
 
-    setIsSaving(true);
-    try {
-      const conversation = await chatService.saveConversation(user.id, messages);
-      if (conversation) {
-        setCurrentConversationId(conversation.id);
-        setSaveSuccess(true);
-        // Force sidebar to refresh and show the new conversation
-        setSidebarKey(prev => prev + 1);
-        setTimeout(() => setSaveSuccess(false), 3000);
-      }
-    } catch (error) {
-      console.error('Failed to save chat:', error);
-      // Could add error toast here
-    } finally {
-      setIsSaving(false);
-    }
+  const handleManualSave = async () => {
+    // Force an immediate save and show feedback
+    await autoSaveChat();
   };
 
   const handleLoadConversation = (savedChat: SavedChat) => {
     setMessages(savedChat.messages);
     setCurrentConversationId(savedChat.conversation.id);
-    setSaveSuccess(false);
     // Ensure chatbot window is visible when loading a conversation
     if (!showChatBot) {
       setShowChatBot(true);
@@ -327,24 +371,22 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               <Bot className="w-5 h-5" />
             </button>
             <button
-              onClick={handleSaveChat}
-              disabled={messages.length <= 1 || isSaving}
+              onClick={handleManualSave}
+              disabled={messages.length <= 1 || isAutoSaving}
               className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
-                saveSuccess
+                currentConversationId
                   ? 'text-green-400 bg-green-400/20'
                   : messages.length <= 1
                   ? 'text-gray-600 cursor-not-allowed'
                   : 'text-gray-400 hover:text-teal-400 hover:bg-white/10'
               }`}
               title={
-                saveSuccess
-                  ? 'Chat saved!'
-                  : currentConversationId
-                  ? 'Update saved chat'
-                  : 'Save chat'
+                currentConversationId
+                  ? 'Chat auto-saved ✓'
+                  : 'Save chat manually'
               }
             >
-              {isSaving ? (
+              {isAutoSaving ? (
                 <Sparkles className="w-5 h-5 animate-spin" />
               ) : (
                 <Save className="w-5 h-5" />
