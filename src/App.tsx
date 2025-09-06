@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
 import TravelMateAILogo from './components/Logo';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, loading, error: authError, signUp, signIn, signOut, isAuthenticated } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ function App() {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,12 +60,38 @@ function App() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Handle form submission here
-      console.log('Form submitted:', formData);
-      setIsAuthenticated(true);
+    
+    if (!validateForm() || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    setErrors({});
+    
+    try {
+      let result;
+      
+      if (isSignUp) {
+        result = await signUp(formData.email, formData.password, formData.name);
+      } else {
+        result = await signIn(formData.email, formData.password);
+      }
+      
+      if (!result.success) {
+        // Handle specific error cases
+        if (result.error === 'User already registered') {
+          setErrors({ submit: 'This email is already registered. Please sign in instead.' });
+        } else if (result.error?.includes('Database error granting user')) {
+          setErrors({ submit: 'Authentication service temporarily unavailable. Please try again.' });
+        } else {
+          setErrors({ submit: result.error || 'Authentication failed' });
+        }
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      setErrors({ submit: 'An unexpected error occurred. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,17 +101,46 @@ function App() {
     setErrors({});
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setShowForgotPassword(false);
   };
 
-  const handleSignOut = () => {
-    setIsAuthenticated(false);
+  const handleSignOut = async () => {
+    await signOut();
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     setErrors({});
     setIsSignUp(false);
   };
 
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true);
+    setErrors({});
+  };
+
+  const handleBackToSignIn = () => {
+    setShowForgotPassword(false);
+    setIsSignUp(false);
+    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+    setErrors({});
+  };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center">
+          <TravelMateAILogo className="w-24 h-24 mx-auto mb-4 animate-pulse" />
+          <p className="text-white text-lg">Loading your travel assistant...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isAuthenticated) {
-    return <ChatBot onSignOut={handleSignOut} />;
+    return <ChatBot user={user} onSignOut={handleSignOut} />;
+  }
+
+  if (showForgotPassword) {
+    return <ForgotPassword onBack={handleBackToSignIn} />;
   }
 
   return (
@@ -156,7 +214,7 @@ function App() {
             {/* Mode Toggle */}
             <div className="flex bg-white/10 backdrop-blur-sm rounded-2xl p-1 mb-4 border border-white/10">
               <button
-                onClick={() => !isSignUp && toggleMode()}
+                onClick={() => isSignUp && toggleMode()}
                 className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                   !isSignUp 
                     ? 'bg-gradient-to-r from-orange-500 to-teal-500 text-white shadow-lg shadow-orange-500/25' 
@@ -166,7 +224,7 @@ function App() {
                 Sign In
               </button>
               <button
-                onClick={() => isSignUp && toggleMode()}
+                onClick={() => !isSignUp && toggleMode()}
                 className={`flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                   isSignUp 
                     ? 'bg-gradient-to-r from-orange-500 to-teal-500 text-white shadow-lg shadow-orange-500/25' 
@@ -321,13 +379,32 @@ function App() {
                 </div>
               )}
 
+              {/* Global Error Message */}
+              {(errors.submit || authError) && (
+                <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-3 mb-4">
+                  <p className="text-red-300 text-sm text-center">
+                    {errors.submit || authError}
+                  </p>
+                </div>
+              )}
+
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:shadow-orange-500/25"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {isSignUp ? 'Start Your Adventure' : 'Access Assistant'}
-                <ArrowRight className="w-5 h-5" />
+                {isSubmitting ? (
+                  <>
+                    <Sparkles className="w-5 h-5 animate-spin" />
+                    {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                  </>
+                ) : (
+                  <>
+                    {isSignUp ? 'Start Your Adventure' : 'Access Assistant'}
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
               </button>
             </form>
           </div>
