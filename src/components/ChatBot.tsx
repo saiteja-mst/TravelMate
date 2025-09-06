@@ -29,7 +29,6 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -290,13 +289,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowSidebar(true)}
-              className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
-              title="Chat history"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <button
               onClick={clearChat}
               className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
               title="New chat"
@@ -337,9 +329,23 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10">
+      {/* Main Content Area with Sidebar */}
+      <div className="flex-1 overflow-hidden flex">
+        {/* Chat Sidebar - Always Visible */}
+        <div className="w-80 flex-shrink-0">
+          <ChatSidebar
+            user={user}
+            isOpen={true}
+            onClose={() => {}} // No-op since sidebar is always open
+            onLoadConversation={handleLoadConversation}
+            onNewChat={startNewChat}
+            currentConversationId={currentConversationId}
+          />
+        </div>
+
+        {/* Chat Messages Area */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full">
           <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
             {messages.map((message) => (
               <div
@@ -396,54 +402,35 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             <div ref={messagesEndRef} />
           </div>
 
-        </div>
-        
-        {/* Input Area - Fixed at Bottom */}
-        <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
-          <div className="max-w-4xl mx-auto p-4">
-            <div className="flex gap-4 items-end">
-              <div className="flex-1">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Come on, let's deep-dive into your travel plan"
-                  className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 text-white placeholder-gray-300 shadow-xl hover:bg-white/15 transition-all duration-200"
-                />
+          </div>
+          
+          {/* Input Area - Fixed at Bottom */}
+          <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
+            <div className="max-w-4xl mx-auto p-4">
+              <div className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Come on, let's deep-dive into your travel plan"
+                    className="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 text-white placeholder-gray-300 shadow-xl hover:bg-white/15 transition-all duration-200"
+                  />
+                </div>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!inputMessage.trim() || isLoading}
+                  className="p-4 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-2xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-110 hover:shadow-orange-500/25"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading}
-                className="p-4 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-2xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-110 hover:shadow-orange-500/25"
-              >
-                <Send className="w-5 h-5" />
-              </button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Chat Sidebar */}
-      <ChatSidebar
-        user={user}
-        isOpen={showSidebar}
-        onClose={() => setShowSidebar(false)}
-        onLoadConversation={handleLoadConversation}
-        onNewChat={startNewChat}
-        currentConversationId={currentConversationId}
-      />
-
-      {/* Sidebar Toggle for Mobile */}
-      {!showSidebar && (
-        <button
-          onClick={() => setShowSidebar(true)}
-          className="fixed top-4 left-4 z-30 lg:hidden p-3 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 shadow-lg"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-      )}
     </div>
   );
 };

@@ -119,19 +119,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   };
 
   return (
-    <>
-      {/* Backdrop */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          onClick={onClose}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-80 bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+    <div className="h-full w-full bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/20">
@@ -139,12 +127,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <MessageSquare className="w-5 h-5 text-teal-400" />
               <h2 className="text-lg font-bold text-white">Chat History</h2>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 lg:hidden"
-            >
-              <X className="w-4 h-4" />
-            </button>
           </div>
 
           {/* New Chat Button */}
@@ -152,7 +134,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             <button
               onClick={() => {
                 onNewChat();
-                onClose();
               }}
               className="w-full flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white rounded-xl hover:from-orange-600 hover:via-teal-600 hover:to-blue-700 transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
             >
@@ -197,7 +178,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     key={conversation.id}
                     onClick={() => {
                       handleLoadConversation(conversation.id);
-                      onClose();
                     }}
                     className={`group cursor-pointer rounded-xl p-3 transition-all duration-200 hover:bg-white/10 border ${
                       currentConversationId === conversation.id
@@ -279,8 +259,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             </p>
           </div>
         </div>
-      </div>
-    </>
+    </div>
   );
 };
 
