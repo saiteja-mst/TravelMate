@@ -143,7 +143,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage: Message = {
-          content: "Hey, hi, amazing Human Being! Can we just start our journey with just a hi to me please....",
+      id: Date.now().toString(),
       type: 'user',
       content: inputMessage,
       timestamp: new Date()
@@ -443,16 +443,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         >
           <Menu className="w-5 h-5" />
         </button>
-      )}
-    </div>
-  );
-};
-
-export default ChatBot;
-          user={user}
-          onLoadConversation={handleLoadConversation}
-          onClose={() => setShowChatHistory(false)}
-        />
       )}
     </div>
   );
