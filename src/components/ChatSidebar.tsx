@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Plus, Trash2, Edit3, Calendar, X, Save, RotateCcw, Menu } from 'lucide-react';
+import { MessageSquare, Plus, Trash2, Edit3, Calendar, X, Save, RotateCcw } from 'lucide-react';
 import { chatService } from '../services/chatService';
 import type { ChatConversation, SavedChat } from '../types/chat';
 import type { UserProfile } from '../types/auth';
@@ -26,6 +26,34 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Handle mouse enter with immediate expansion
+  const handleMouseEnter = () => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setIsExpanded(true);
+  };
+
+  // Handle mouse leave with delay
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsExpanded(false);
+    }, 300);
+    setHoverTimeout(timeout);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+    };
+  }, [hoverTimeout]);
 
   useEffect(() => {
     if (isOpen) {
@@ -119,7 +147,29 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   };
 
   return (
-    <div className="h-full w-full bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl">
+    <div 
+      className={`h-full bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0 ${
+        isExpanded ? 'w-80' : 'w-16'
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Collapsed State */}
+      {!isExpanded && (
+        <div className="h-full w-16 flex flex-col items-center py-4">
+          <div className="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 cursor-pointer">
+            <MessageSquare className="w-6 h-6 text-teal-400" />
+          </div>
+          <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-60">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="w-8 h-2 bg-white/20 rounded-full"></div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Expanded State */}
+      {isExpanded && (
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/20">
@@ -259,6 +309,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             </p>
           </div>
         </div>
+      )}
     </div>
   );
 };

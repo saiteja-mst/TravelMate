@@ -33,39 +33,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [sidebarKey, setSidebarKey] = useState(0);
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
-  const [sidebarHover, setSidebarHover] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const sidebarTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Handle sidebar hover with delay
-  const handleSidebarMouseEnter = () => {
-    if (sidebarTimeoutRef.current) {
-      clearTimeout(sidebarTimeoutRef.current);
-    }
-    setSidebarHover(true);
-    setSidebarExpanded(true);
-  };
-
-  const handleSidebarMouseLeave = () => {
-    setSidebarHover(false);
-    // Add delay before collapsing
-    sidebarTimeoutRef.current = setTimeout(() => {
-      if (!sidebarHover) {
-        setSidebarExpanded(false);
-      }
-    }, 300);
-  };
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (sidebarTimeoutRef.current) {
-        clearTimeout(sidebarTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -365,43 +334,16 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
       {/* Main Content Area with Sidebar */}
       <div className="flex-1 overflow-hidden flex">
-        {/* Dynamic Chat Sidebar */}
-        <div 
-          className={`flex-shrink-0 transition-all duration-300 ease-in-out relative z-20 ${
-            sidebarExpanded ? 'w-80' : 'w-16'
-          }`}
-          onMouseEnter={handleSidebarMouseEnter}
-          onMouseLeave={handleSidebarMouseLeave}
-        >
-          {/* Collapsed State - Show Icon Only */}
-          {!sidebarExpanded && (
-            <div className="h-full w-16 bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl flex flex-col items-center py-4">
-              <div className="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 cursor-pointer">
-                <MessageSquare className="w-6 h-6 text-teal-400" />
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-60">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="w-8 h-2 bg-white/20 rounded-full"></div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Expanded State - Full Sidebar */}
-          {sidebarExpanded && (
-            <div className="w-80 h-full">
-              <ChatSidebar
-                key={sidebarKey}
-                user={user}
-                isOpen={true}
-                onClose={() => {}} // No-op since sidebar is controlled by hover
-                onLoadConversation={handleLoadConversation}
-                onNewChat={startNewChat}
-                currentConversationId={currentConversationId}
-              />
-            </div>
-          )}
-        </div>
+        {/* Chat Sidebar */}
+        <ChatSidebar
+          key={sidebarKey}
+          user={user}
+          isOpen={true}
+          onClose={() => {}}
+          onLoadConversation={handleLoadConversation}
+          onNewChat={startNewChat}
+          currentConversationId={currentConversationId}
+        />
 
         {/* Chat Messages Area */}
         <div className="flex-1 overflow-hidden flex flex-col">
@@ -462,15 +404,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               <div ref={messagesEndRef} />
             </div>
           </div>
-          <ChatSidebar
-            key={sidebarKey}
-            user={user}
-            isOpen={true}
-            onClose={() => {}} // No-op since sidebar is always open
-            onLoadConversation={handleLoadConversation}
-            onNewChat={startNewChat}
-            currentConversationId={currentConversationId}
-          />
           
           {/* Input Area - Fixed at Bottom */}
           <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
