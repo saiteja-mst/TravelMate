@@ -282,7 +282,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       </div>
 
       {/* Header */}
-      <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl relative z-10">
+      <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl fixed top-0 left-0 right-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <TravelMateAILogo className="w-16 h-16 hover:scale-110 transition-transform duration-300" />
@@ -361,7 +361,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       </div>
 
       {/* Main Content Area with Sidebar */}
-      <div className="flex-1 overflow-hidden flex">
+      <div className="flex-1 overflow-hidden flex pt-20">
         {/* Chat History Sidebar */}
         <div className={`transition-all duration-300 ease-in-out ${
           showChatHistory ? 'w-80 opacity-100' : 'w-0 opacity-0'
@@ -383,7 +383,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         } overflow-hidden flex flex-col`}>
           {showChatBot && (
             <>
-              <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full">
+              <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full pt-4">
                 <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
                   {messages.map((message) => (
                     <div
@@ -442,7 +442,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               </div>
               
               {/* Input Area - Fixed at Bottom */}
-              <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
+              <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-40 flex-shrink-0">
                 <div className="max-w-4xl mx-auto p-4">
                   <div className="flex gap-4 items-end">
                     <div className="flex-1">
@@ -472,7 +472,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
         {/* Empty State when both panels are hidden */}
         {!showChatHistory && !showChatBot && (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center pt-4">
             <div className="text-center">
               <TravelMateAILogo className="w-32 h-32 mx-auto mb-6 opacity-50" />
               <h2 className="text-2xl font-bold text-white mb-4">Welcome to TravelMate AI</h2>
