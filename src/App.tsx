@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
-import AboutPage from './components/AboutPage';
 import TravelMateAILogo from './components/Logo';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
   const { user, loading, error: authError, signUp, signIn, signOut, isAuthenticated } = useAuth();
-  const [currentPage, setCurrentPage] = useState<'auth' | 'chat' | 'about'>('auth');
+  const [currentPage, setCurrentPage] = useState<'auth' | 'chat'>('auth');
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -114,18 +113,6 @@ function App() {
     setCurrentPage('auth');
   };
 
-  const handleForgotPassword = () => {
-    setShowForgotPassword(true);
-    setErrors({});
-  };
-
-  const handleBackToSignIn = () => {
-    setShowForgotPassword(false);
-    setIsSignUp(false);
-    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-    setErrors({});
-  };
-
   // Show loading state
   if (loading) {
     return (
@@ -142,14 +129,6 @@ function App() {
     return (
       <ChatBot user={user} onSignOut={handleSignOut} />
     );
-  }
-
-  if (currentPage === 'about') {
-    return <AboutPage onBack={() => setCurrentPage('auth')} />;
-  }
-
-  if (showForgotPassword) {
-    return <ForgotPassword onBack={handleBackToSignIn} />;
   }
 
   return (
@@ -429,18 +408,6 @@ function App() {
                 {isSignUp ? 'Sign In Here' : 'Join Our Network'}
               </button>
             </p>
-            
-            {/* About Link */}
-            <div className="text-center mt-3 pt-3 border-t border-white/10">
-              <button
-                onClick={() => setCurrentPage('about')}
-                className="text-xs text-gray-400 hover:text-teal-400 transition-colors hover:underline flex items-center justify-center gap-1 mx-auto group"
-              >
-                <span>✨</span>
-                <span className="group-hover:scale-105 transition-transform">About the Assistant</span>
-                <span>🤖</span>
-              </button>
-            </div>
           </div>
         </div>
 
