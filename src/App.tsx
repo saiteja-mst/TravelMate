@@ -6,6 +6,7 @@ import { useAuth } from './hooks/useAuth';
 
 function App() {
   const { user, loading, error: authError, signUp, signIn, signOut, isAuthenticated } = useAuth();
+  const [currentPage, setCurrentPage] = useState<'auth' | 'chat'>('auth');
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -109,18 +110,7 @@ function App() {
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     setErrors({});
     setIsSignUp(false);
-  };
-
-  const handleForgotPassword = () => {
-    setShowForgotPassword(true);
-    setErrors({});
-  };
-
-  const handleBackToSignIn = () => {
-    setShowForgotPassword(false);
-    setIsSignUp(false);
-    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-    setErrors({});
+    setCurrentPage('auth');
   };
 
   // Show loading state
@@ -136,11 +126,9 @@ function App() {
   }
 
   if (isAuthenticated) {
-    return <ChatBot user={user} onSignOut={handleSignOut} />;
-  }
-
-  if (showForgotPassword) {
-    return <ForgotPassword onBack={handleBackToSignIn} />;
+    return (
+      <ChatBot user={user} onSignOut={handleSignOut} />
+    );
   }
 
   return (
