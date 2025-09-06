@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Save, Menu } from 'lucide-react';
+import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Save, Menu, MessageSquare } from 'lucide-react';
 import OpenAI from 'openai';
 import TravelMateAILogo from './Logo';
 import ChatSidebar from './ChatSidebar';
@@ -33,8 +33,39 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [sidebarKey, setSidebarKey] = useState(0);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [sidebarHover, setSidebarHover] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sidebarTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle sidebar hover with delay
+  const handleSidebarMouseEnter = () => {
+    if (sidebarTimeoutRef.current) {
+      clearTimeout(sidebarTimeoutRef.current);
+    }
+    setSidebarHover(true);
+    setSidebarExpanded(true);
+  };
+
+  const handleSidebarMouseLeave = () => {
+    setSidebarHover(false);
+    // Add delay before collapsing
+    sidebarTimeoutRef.current = setTimeout(() => {
+      if (!sidebarHover) {
+        setSidebarExpanded(false);
+      }
+    }, 300);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (sidebarTimeoutRef.current) {
+        clearTimeout(sidebarTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -334,8 +365,103 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
       {/* Main Content Area with Sidebar */}
       <div className="flex-1 overflow-hidden flex">
-        {/* Chat Sidebar - Always Visible */}
-        <div className="w-80 flex-shrink-0">
+        {/* Dynamic Chat Sidebar */}
+        <div 
+          className={`flex-shrink-0 transition-all duration-300 ease-in-out relative z-20 ${
+            sidebarExpanded ? 'w-80' : 'w-16'
+          }`}
+          onMouseEnter={handleSidebarMouseEnter}
+          onMouseLeave={handleSidebarMouseLeave}
+        >
+          {/* Collapsed State - Show Icon Only */}
+          {!sidebarExpanded && (
+            <div className="h-full w-16 bg-white/10 backdrop-blur-2xl border-r border-white/20 shadow-2xl flex flex-col items-center py-4">
+              <div className="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-200 cursor-pointer">
+                <MessageSquare className="w-6 h-6 text-teal-400" />
+              </div>
+              <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-60">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-8 h-2 bg-white/20 rounded-full"></div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Expanded State - Full Sidebar */}
+          {sidebarExpanded && (
+            <div className="w-80 h-full">
+              <ChatSidebar
+                key={sidebarKey}
+                user={user}
+                isOpen={true}
+                onClose={() => {}} // No-op since sidebar is controlled by hover
+                onLoadConversation={handleLoadConversation}
+                onNewChat={startNewChat}
+                currentConversationId={currentConversationId}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Chat Messages Area */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full">
+            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  {message.type === 'bot' && (
+                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                  )}
+                  
+                  <div
+                    className={`max-w-3xl rounded-2xl px-6 py-4 ${
+                      message.type === 'user'
+                        ? 'bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white ml-12 shadow-xl hover:shadow-2xl transition-shadow duration-300'
+                        : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-white/15'
+                    } hover:scale-[1.02] transition-transform duration-200`}
+                  >
+                    <div className={`text-sm leading-relaxed ${
+                      message.type === 'user' ? 'text-white' : 'text-gray-100'
+                    }`}>
+                      {message.type === 'bot' ? formatMessageContent(message.content) : message.content}
+                    </div>
+                    <div className={`text-xs mt-2 ${
+                      message.type === 'user' ? 'text-orange-100' : 'text-gray-400'
+                    }`}>
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+
+                  {message.type === 'user' && (
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {isLoading && (
+                <div className="flex gap-4 justify-start">
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl px-6 py-4 animate-pulse">
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <Sparkles className="w-4 h-4 animate-spin text-teal-400" />
+                      <span className="text-sm">Creating your personalized itinerary...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
           <ChatSidebar
             key={sidebarKey}
             user={user}
@@ -345,68 +471,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             onNewChat={startNewChat}
             currentConversationId={currentConversationId}
           />
-        </div>
-
-        {/* Chat Messages Area */}
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full">
-          <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {message.type === 'bot' && (
-                  <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                
-                <div
-                  className={`max-w-3xl rounded-2xl px-6 py-4 ${
-                    message.type === 'user'
-                      ? 'bg-gradient-to-r from-orange-500 via-teal-500 to-blue-600 text-white ml-12 shadow-xl hover:shadow-2xl transition-shadow duration-300'
-                      : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-white/15'
-                  } hover:scale-[1.02] transition-transform duration-200`}
-                >
-                  <div className={`text-sm leading-relaxed ${
-                    message.type === 'user' ? 'text-white' : 'text-gray-100'
-                  }`}>
-                    {message.type === 'bot' ? formatMessageContent(message.content) : message.content}
-                  </div>
-                  <div className={`text-xs mt-2 ${
-                    message.type === 'user' ? 'text-orange-100' : 'text-gray-400'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-
-                {message.type === 'user' && (
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-110 transition-transform duration-200">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {isLoading && (
-              <div className="flex gap-4 justify-start">
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 via-teal-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl px-6 py-4 animate-pulse">
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <Sparkles className="w-4 h-4 animate-spin text-teal-400" />
-                    <span className="text-sm">Creating your personalized itinerary...</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
-
-          </div>
           
           {/* Input Area - Fixed at Bottom */}
           <div className="border-t border-white/20 bg-white/10 backdrop-blur-2xl relative z-10 flex-shrink-0">
