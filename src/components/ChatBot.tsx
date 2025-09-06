@@ -33,6 +33,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(true);
   const [showChatBot, setShowChatBot] = useState(true);
+  const [sidebarKey, setSidebarKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
