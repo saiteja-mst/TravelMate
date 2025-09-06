@@ -16,7 +16,11 @@ class AuthService {
       });
 
       if (authError) {
-        console.error('Signup error:', authError);
+        if (authError.message === 'User already registered') {
+          console.warn('Signup validation:', authError.message);
+        } else {
+          console.error('Signup error:', authError);
+        }
         return { user: null, session: null, error: authError.message };
       }
 
