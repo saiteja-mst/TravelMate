@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
 import TravelMateAILogo from './components/Logo';
-import ForgotPassword from './components/ForgotPassword';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
