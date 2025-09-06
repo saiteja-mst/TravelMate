@@ -132,8 +132,8 @@ function App() {
           <div className="p-8 pb-6">
             <div className="text-center mb-8">
               {/* Travel-themed logo */}
-              <div className="mx-auto mb-6 hover:scale-110 transition-transform duration-300">
-                <TravelMateAILogo className="w-20 h-20" />
+              <div className="mx-auto mb-8 hover:scale-110 transition-transform duration-300 flex justify-center">
+                <TravelMateAILogo className="w-32 h-32" />
               </div>
               
               <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent mb-2 font-['Inter']">
