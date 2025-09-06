@@ -276,10 +276,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
             >
               <LogOut className="w-5 h-5" />
             </button>
-              title="Clear chat"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
           </div>
         </div>
       </div>
