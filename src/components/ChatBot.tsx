@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Save, History } from 'lucide-react';
+import { Send, Bot, User, MapPin, Calendar, Plane, Sparkles, RotateCcw, Globe, Save, Menu } from 'lucide-react';
 import OpenAI from 'openai';
 import TravelMateAILogo from './Logo';
-import ChatHistory from './ChatHistory';
+import ChatSidebar from './ChatSidebar';
 import { chatService } from '../services/chatService';
 import type { UserProfile } from '../types/auth';
 import type { Message, SavedChat } from '../types/chat';
@@ -29,7 +29,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showChatHistory, setShowChatHistory] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -187,6 +187,11 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
   };
 
   const clearChat = () => {
+    setCurrentConversationId(null);
+    startNewChat();
+  };
+
+  const startNewChat = () => {
     setMessages([
       {
         id: '1',
@@ -195,7 +200,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         timestamp: new Date()
       }
     ]);
-    setCurrentConversationId(null);
     setSaveSuccess(false);
   };
 
@@ -286,18 +290,18 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={clearChat}
-              className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
-              title="Clear chat"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setShowChatHistory(true)}
+              onClick={() => setShowSidebar(true)}
               className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
               title="Chat history"
             >
-              <History className="w-5 h-5" />
+              <Menu className="w-5 h-5" />
+            </button>
+            <button
+              onClick={clearChat}
+              className="p-2 text-gray-400 hover:text-teal-400 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-110"
+              title="New chat"
+            >
+              <RotateCcw className="w-5 h-5" />
             </button>
             <button
               onClick={handleSaveChat}
@@ -421,9 +425,30 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         </div>
       </div>
 
-      {/* Chat History Modal */}
-      {showChatHistory && (
-        <ChatHistory
+      {/* Chat Sidebar */}
+      <ChatSidebar
+        user={user}
+        isOpen={showSidebar}
+        onClose={() => setShowSidebar(false)}
+        onLoadConversation={handleLoadConversation}
+        onNewChat={startNewChat}
+        currentConversationId={currentConversationId}
+      />
+
+      {/* Sidebar Toggle for Mobile */}
+      {!showSidebar && (
+        <button
+          onClick={() => setShowSidebar(true)}
+          className="fixed top-4 left-4 z-30 lg:hidden p-3 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 shadow-lg"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default ChatBot;
           user={user}
           onLoadConversation={handleLoadConversation}
           onClose={() => setShowChatHistory(false)}
