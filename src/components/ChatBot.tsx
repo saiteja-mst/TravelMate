@@ -361,11 +361,11 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       </div>
 
       {/* Main Content Area with Sidebar */}
-      <div className="flex-1 overflow-hidden flex pt-20">
+      <div className="flex-1 flex pt-20 h-screen">
         {/* Chat History Sidebar */}
         <div className={`transition-all duration-300 ease-in-out ${
           showChatHistory ? 'w-80 opacity-100' : 'w-0 opacity-0'
-        } overflow-hidden`}>
+        } overflow-hidden h-full`}>
           <ChatSidebar
             key={sidebarKey}
             user={user}
@@ -380,11 +380,11 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
         {/* Chat Messages Area */}
         <div className={`transition-all duration-300 ease-in-out ${
           showChatBot ? 'flex-1 opacity-100' : 'w-0 opacity-0'
-        } overflow-hidden flex flex-col`}>
+        } overflow-hidden flex flex-col h-full`}>
           {showChatBot && (
             <>
-              <div className="max-w-4xl mx-auto flex-1 flex flex-col relative z-10 w-full pt-4">
-                <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4">
+              <div className="flex-1 flex flex-col relative z-10 w-full">
+                <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-4 max-w-4xl mx-auto w-full">
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -472,7 +472,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
         {/* Empty State when both panels are hidden */}
         {!showChatHistory && !showChatBot && (
-          <div className="flex-1 flex items-center justify-center pt-4">
+          <div className="flex-1 flex items-center justify-center h-full">
             <div className="text-center">
               <TravelMateAILogo className="w-32 h-32 mx-auto mb-6 opacity-50" />
               <h2 className="text-2xl font-bold text-white mb-4">Welcome to TravelMate AI</h2>
