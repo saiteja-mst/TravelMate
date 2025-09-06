@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Plane, MapPin, Compass, Sparkles } from 'lucide-react';
 import ChatBot from './components/ChatBot';
+import AboutPage from './components/AboutPage';
 import TravelMateAILogo from './components/Logo';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
   const { user, loading, error: authError, signUp, signIn, signOut, isAuthenticated } = useAuth();
+  const [currentPage, setCurrentPage] = useState<'auth' | 'chat' | 'about'>('auth');
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -109,6 +111,7 @@ function App() {
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     setErrors({});
     setIsSignUp(false);
+    setCurrentPage('auth');
   };
 
   const handleForgotPassword = () => {
@@ -136,7 +139,10 @@ function App() {
   }
 
   if (isAuthenticated) {
-    return <ChatBot user={user} onSignOut={handleSignOut} />;
+    if (currentPage === 'about') {
+      return <AboutPage onBack={() => setCurrentPage('chat')} />;
+    }
+    return <ChatBot user={user} onSignOut={handleSignOut} onLogoClick={() => setCurrentPage('about')} />;
   }
 
   if (showForgotPassword) {
