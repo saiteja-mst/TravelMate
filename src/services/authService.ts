@@ -410,6 +410,12 @@ class AuthService {
         if (data?.success && data?.email_sent) {
           console.log('✅ OTP email sent successfully to:', email);
           return { success: true };
+        } else if (data?.success && data?.development_mode) {
+          console.log('✅ OTP stored successfully (development mode) for:', email);
+          if (data?.last_error) {
+            console.warn('⚠️ Email service issues (but OTP stored):', data.last_error);
+          }
+          return { success: true };
         } else {
           console.error('Email sending failed:', data);
           return { 
