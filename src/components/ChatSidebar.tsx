@@ -31,21 +31,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     loadConversations();
   }, [user.id]);
 
-  // Auto-refresh conversations every 10 seconds to show new auto-saved chats (without loading state)
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const data = await chatService.getUserConversations(user.id);
-        setConversations(data);
-      } catch (err) {
-        // Silently fail for auto-refresh to not disrupt UI
-        console.error('Auto-refresh failed:', err);
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [user.id]);
-
   const loadConversations = async () => {
     try {
       setLoading(true);

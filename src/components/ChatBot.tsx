@@ -30,10 +30,8 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(true);
   const [showChatBot, setShowChatBot] = useState(true);
-  const [sidebarKey, setSidebarKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -43,59 +41,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ user, onSignOut }) => {
 
   useEffect(() => {
     scrollToBottom();
-    // Auto-save chat when messages change (but not on initial load)
-    if (messages.length > 1) {
-      autoSaveChat();
-    }
   }, [messages]);
-
-  const autoSaveChat = async () => {
-    if (!user || messages.length <= 1 || isAutoSaving) return;
-
-    setIsAutoSaving(true);
-    try {
-      if (currentConversationId) {
-        // Update existing conversation
-        await updateExistingConversation();
-      } else {
-        // Create new conversation
-        const conversation = await chatService.saveConversation(user.id, messages);
-        if (conversation) {
-          setCurrentConversationId(conversation.id);
-        }
-      }
-    } catch (error) {
-      console.error('Auto-save failed:', error);
-      // Silently fail for auto-save to not interrupt user experience
-    } finally {
-      setIsAutoSaving(false);
-    }
-  };
-
-  const updateExistingConversation = async () => {
-    if (!user || !currentConversationId) return;
-
-    try {
-      // Delete existing messages for this conversation
-      await chatService.deleteConversationMessages(currentConversationId);
-      
-      // Save all current messages
-      const messagesToInsert = messages.map(msg => ({
-        conversation_id: currentConversationId,
-        type: msg.type,
-        content: msg.content,
-        timestamp: msg.timestamp.toISOString()
-      }));
-
-      await chatService.saveMessagesToConversation(currentConversationId, messagesToInsert);
-      
-      // Update conversation timestamp
-      await chatService.updateConversationTimestamp(currentConversationId);
-    } catch (error) {
-      console.error('Failed to update existing conversation:', error);
-      throw error;
-    }
-  };
 
   const generateItinerary = async (userInput: string): Promise<string> => {
     try {
@@ -257,13 +203,18 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
   };
 
   const handleSaveChat = async () => {
-    // Manual save is now just a trigger for auto-save
-    await autoSaveChat();
-  };
+    if (!user || messages.length <= 1) return;
 
-  const handleManualSave = async () => {
-    // Force an immediate save and show feedback
-    await autoSaveChat();
+    try {
+      const conversation = await chatService.saveConversation(user.id, messages);
+      if (conversation) {
+        setCurrentConversationId(conversation.id);
+        // Refresh sidebar to show the new conversation
+        setSidebarKey(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Failed to save chat:', error);
+    }
   };
 
   const handleLoadConversation = (savedChat: SavedChat) => {
@@ -366,8 +317,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               <Bot className="w-5 h-5" />
             </button>
             <button
-              onClick={handleManualSave}
-              disabled={messages.length <= 1 || isAutoSaving}
+              onClick={handleSaveChat}
+              disabled={messages.length <= 1}
               className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 ${
                 currentConversationId
                   ? 'text-green-400 bg-green-400/20'
@@ -377,8 +328,8 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
               }`}
               title={
                 currentConversationId
-                  ? 'Chat auto-saved ✓'
-                  : 'Save chat manually'
+                  ? 'Chat saved ✓'
+                  : 'Save chat'
               }
             >
               <Save className="w-5 h-5" />
@@ -400,7 +351,6 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
           showChatHistory ? 'w-80 opacity-100' : 'w-0 opacity-0'
         } overflow-hidden`}>
           <ChatSidebar
-            key={sidebarKey}
             user={user}
             isOpen={showChatHistory}
             onClose={() => setShowChatHistory(false)}
