@@ -1,4 +1,25 @@
-  <stop offset="100%" stopColor="#1e40af" />
+import React from 'react';
+
+interface TravelMateAILogoProps {
+  className?: string;
+}
+
+const TravelMateAILogo: React.FC<TravelMateAILogoProps> = ({ className = "" }) => {
+  return (
+    <div className={`inline-block group ${className}`}>
+      <svg
+        width="120"
+        height="120"
+        viewBox="0 0 120 120"
+        xmlns="http://www.w3.org/2000/svg"
+        className="drop-shadow-lg"
+      >
+        <defs>
+          {/* Primary Gradient */}
+          <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0B1426" />
+            <stop offset="50%" stopColor="#1E3A8A" />
+            <stop offset="100%" stopColor="#1e40af" />
           </linearGradient>
 
           {/* Orange Accent Gradient */}
