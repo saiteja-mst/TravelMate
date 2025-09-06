@@ -178,7 +178,7 @@ function App() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-3 -mt-1">
               {/* Name Field (Sign Up Only) */}
               <div className={`transition-all duration-500 overflow-hidden ${
                 isSignUp ? 'max-h-16 opacity-100' : 'max-h-0 opacity-0'
