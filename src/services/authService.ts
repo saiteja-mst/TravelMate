@@ -316,26 +316,66 @@ class AuthService {
   // Password Reset Methods
   async sendPasswordResetOTP(email: string): Promise<{ success: boolean; error?: string }> {
     try {
-      // Generate 6-digit OTP
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-      // Store OTP in localStorage temporarily (in production, use a secure backend)
-      const otpData = {
-        email,
-        otp,
-        expiresAt: expiresAt.toISOString(),
-        verified: false
-      };
-      localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
-
-      // Simulate sending email (in production, use a real email service)
-      console.log(`Password Reset OTP for ${email}: ${otp}`);
+      // Check if user exists first
+      const { data: userData, error: userError } = await supabase.auth.admin.getUserByEmail(email);
       
-      // Show OTP in alert for demo purposes (remove in production)
-      alert(`Demo: Your password reset OTP is: ${otp}\n\nIn production, this would be sent to your email.`);
+      if (userError && userError.message !== 'User not found') {
+        console.error('Error checking user:', userError);
+        return { success: false, error: 'Failed to verify email address' };
+      }
 
-      return { success: true };
+      if (!userData?.user) {
+        return { success: false, error: 'No account found with this email address' };
+      }
+
+      try {
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+        // Store OTP in localStorage temporarily
+        const otpData = {
+          email,
+          otp,
+          expiresAt: expiresAt.toISOString(),
+          verified: false,
+          userId: userData.user.id
+        };
+        localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
+
+        // Send OTP via Supabase Edge Function
+        const { data, error } = await supabase.functions.invoke('send-otp-email', {
+          body: { email, otp }
+        });
+
+        if (error) {
+          console.error('Edge function error:', error);
+          // Fallback: Show OTP in alert for demo
+          alert(`Demo Mode: Your password reset OTP is: ${otp}\n\nEmail service is not configured. In production, this would be sent to your email.`);
+        } else if (data?.demo_otp) {
+          // Demo mode - show OTP
+          alert(`Demo Mode: Your password reset OTP is: ${data.demo_otp}\n\nCheck your email for the OTP (or use the one shown here for demo).`);
+        }
+
+        return { success: true };
+      } catch (emailError) {
+        console.error('Email sending error:', emailError);
+        // Still return success but with fallback
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        
+        const otpData = {
+          email,
+          otp,
+          expiresAt: expiresAt.toISOString(),
+          verified: false,
+          userId: userData.user.id
+        };
+        localStorage.setItem(`password_reset_${email}`, JSON.stringify(otpData));
+        
+        alert(`Fallback Mode: Your password reset OTP is: ${otp}\n\nEmail service unavailable. Use this OTP to continue.`);
+        return { success: true };
+      }
     } catch (error) {
       console.error('Send OTP error:', error);
       return { 
@@ -404,10 +444,9 @@ class AuthService {
 
       // Update password using Supabase Admin API
       // Note: In production, this should be done through a secure backend endpoint
-      const { error } = await supabase.auth.admin.updateUserById(
-        otpData.userId || '', // You'd need to store userId during OTP generation
+      const { error } = await supabase.auth.updateUser({
         { password: newPassword }
-      );
+      });
 
       if (error) {
         // Fallback: Use Supabase's built-in password reset

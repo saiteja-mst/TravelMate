@@ -37,6 +37,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!email.trim()) {
       setError('Please enter your email address');
       return;
@@ -56,6 +57,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
       if (result.success) {
         setCurrentStep('otp');
         startResendCooldown();
+        setError(''); // Clear any previous errors
       } else {
         setError(result.error || 'Failed to send OTP. Please try again.');
       }
@@ -68,6 +70,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!otp.trim()) {
       setError('Please enter the OTP');
       return;
@@ -86,6 +89,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
       
       if (result.success) {
         setCurrentStep('newPassword');
+        setError(''); // Clear any previous errors
       } else {
         setError(result.error || 'Invalid OTP. Please try again.');
       }
@@ -98,6 +102,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     
     if (!newPassword) {
       setError('Please enter a new password');
@@ -122,6 +127,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
       
       if (result.success) {
         setCurrentStep('success');
+        setError(''); // Clear any previous errors
       } else {
         setError(result.error || 'Failed to reset password. Please try again.');
       }
@@ -135,15 +141,15 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
   const handleResendOTP = async () => {
     if (resendCooldown > 0) return;
 
+    setError(''); // Clear previous errors
     setIsLoading(true);
-    setError('');
 
     try {
       const result = await authService.sendPasswordResetOTP(email);
       
       if (result.success) {
         startResendCooldown();
-        setError('');
+        // Success message could be added here
       } else {
         setError(result.error || 'Failed to resend OTP. Please try again.');
       }
