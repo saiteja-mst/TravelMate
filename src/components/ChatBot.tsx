@@ -230,6 +230,10 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
     setMessages(savedChat.messages);
     setCurrentConversationId(savedChat.conversation.id);
     setSaveSuccess(false);
+    // Ensure chatbot window is visible when loading a conversation
+    if (!showChatBot) {
+      setShowChatBot(true);
+    }
   };
 
   const formatMessageContent = (content: string) => {
