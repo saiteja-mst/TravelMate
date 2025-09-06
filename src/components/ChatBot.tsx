@@ -464,7 +464,7 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
 
         {/* Empty State when both panels are hidden */}
         {!showChatHistory && !showChatBot && (
-          <div className="flex-1 flex items-center justify-center min-h-screen pt-4">
+          <div className="flex-1 flex items-start justify-center pt-8">
             <div className="text-center">
               <TravelMateAILogo className="w-32 h-32 mx-auto mb-6 opacity-50" />
               <h2 className="text-2xl font-bold text-white mb-4">Welcome to TravelMate AI</h2>
