@@ -8,345 +8,363 @@ const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 
         className="w-full h-full drop-shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-3xl"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Enhanced Gradient Definitions - Luxury Travel Colors */}
+        {/* Enhanced Gradient Definitions */}
         <defs>
-          {/* Primary Luxury Gradient */}
-          <linearGradient id="luxuryPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFD700" stopOpacity="1" />
-            <stop offset="25%" stopColor="#FF6B35" stopOpacity="0.95" />
-            <stop offset="50%" stopColor="#06D6A0" stopOpacity="0.9" />
-            <stop offset="75%" stopColor="#1E3A8A" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#4C1D95" stopOpacity="0.8" />
+          {/* Primary Owl Gradient */}
+          <linearGradient id="owlPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1E3A8A" stopOpacity="1" />
+            <stop offset="30%" stopColor="#3B82F6" stopOpacity="0.95" />
+            <stop offset="70%" stopColor="#1E40AF" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#1E3A8A" stopOpacity="0.85" />
           </linearGradient>
 
-          {/* Neural Network Gradient */}
-          <radialGradient id="neuralCore" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stopColor="#40E0D0" stopOpacity="1" />
-            <stop offset="30%" stopColor="#06D6A0" stopOpacity="0.9" />
-            <stop offset="60%" stopColor="#FF6B35" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#1E3A8A" stopOpacity="0.5" />
+          {/* Owl Accent Gradient */}
+          <linearGradient id="owlAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FF8E53" stopOpacity="1" />
+            <stop offset="50%" stopColor="#FF6B35" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#F97316" stopOpacity="0.8" />
+          </linearGradient>
+
+          {/* Eye Gradient */}
+          <radialGradient id="eyeGradient" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stopColor="#FEFEFE" stopOpacity="1" />
+            <stop offset="70%" stopColor="#F1F5F9" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#E2E8F0" stopOpacity="0.9" />
           </radialGradient>
 
-          {/* Premium Travel Accent */}
-          <linearGradient id="travelAccent" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFD700" />
-            <stop offset="50%" stopColor="#FF8E53" />
-            <stop offset="100%" stopColor="#06D6A0" />
-          </linearGradient>
+          {/* Compass Eye Gradient */}
+          <radialGradient id="compassGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#06D6A0" stopOpacity="1" />
+            <stop offset="50%" stopColor="#1E3A8A" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#0F172A" stopOpacity="0.8" />
+          </radialGradient>
 
-          {/* Interactive Glow */}
+          {/* Premium Glow Filter */}
           <filter id="premiumGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge> 
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
 
-          {/* Particle Flow Filter */}
-          <filter id="particleGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.5" result="softGlow"/>
-            <feMerge>
-              <feMergeNode in="softGlow"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
+          {/* Soft Shadow */}
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#1E3A8A" floodOpacity="0.3"/>
           </filter>
         </defs>
 
-        {/* Outer Luxury Ring - Journey Path */}
+        {/* Outer Circle Border with Animation */}
+        <circle
+          cx="60"
+          cy="60"
+          r="55"
+          fill="none"
+          stroke="url(#owlPrimary)"
+          strokeWidth="3"
+          opacity="0.8"
+          filter="url(#softShadow)"
+        >
+          <animate
+            attributeName="stroke-width"
+            values="3;4;3"
+            dur="4s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="opacity"
+            values="0.8;1;0.8"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+        </circle>
+
+        {/* Background Circle */}
         <circle
           cx="60"
           cy="60"
           r="52"
-          fill="none"
-          stroke="url(#luxuryPrimary)"
-          strokeWidth="2"
-          strokeDasharray="12,6,4,6"
-          opacity="0.6"
-          filter="url(#particleGlow)"
-        >
-          <animateTransform
-            attributeName="transform"
-            attributeType="XML"
-            type="rotate"
-            from="0 60 60"
-            to="360 60 60"
-            dur="25s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="opacity"
-            values="0.6;0.9;0.6"
-            dur="4s"
-            repeatCount="indefinite"
-          />
-        </circle>
+          fill="#FEFEFE"
+          filter="url(#softShadow)"
+        />
 
-        {/* Neural Network Pulsing Ring */}
-        <circle
-          cx="60"
-          cy="60"
-          r="35"
-          fill="none"
-          stroke="url(#neuralCore)"
-          strokeWidth="1.5"
-          opacity="0.4"
-        >
-          <animate
-            attributeName="r"
-            values="35;38;35"
-            dur="3s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="opacity"
-            values="0.4;0.7;0.4"
-            dur="3s"
-            repeatCount="indefinite"
-          />
-        </circle>
-
-        {/* AI Brain Core - Enhanced */}
-        <circle 
-          cx="60" 
-          cy="60" 
-          r="22" 
-          fill="url(#neuralCore)" 
-          filter="url(#premiumGlow)"
-          opacity="0.95"
-        >
-          <animate
-            attributeName="r"
-            values="22;25;22"
-            dur="5s"
-            repeatCount="indefinite"
-          />
-        </circle>
-
-        {/* Premium Neural Network Pattern */}
-        <g transform="translate(60, 60)" fill="white" opacity="0.9">
-          {/* Central AI Hub */}
-          <circle cx="0" cy="0" r="4" fill="white">
-            <animate
-              attributeName="r"
-              values="4;5;4"
-              dur="2s"
-              repeatCount="indefinite"
-            />
-          </circle>
-          
-          {/* Neural Connections */}
-          <g stroke="white" strokeWidth="1.5" fill="none" opacity="0.8">
-            <line x1="0" y1="-12" x2="0" y2="-6">
-              <animate
-                attributeName="opacity"
-                values="0.8;1;0.8"
-                dur="2s"
-                repeatCount="indefinite"
-              />
-            </line>
-            <line x1="0" y1="6" x2="0" y2="12">
-              <animate
-                attributeName="opacity"
-                values="0.8;1;0.8"
-                dur="2.5s"
-                repeatCount="indefinite"
-              />
-            </line>
-            <line x1="-12" y1="0" x2="-6" y2="0">
-              <animate
-                attributeName="opacity"
-                values="0.8;1;0.8"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </line>
-            <line x1="6" y1="0" x2="12" y2="0">
-              <animate
-                attributeName="opacity"
-                values="0.8;1;0.8"
-                dur="1.8s"
-                repeatCount="indefinite"
-              />
-            </line>
-          </g>
-          
-          {/* Neural Nodes */}
-          <circle cx="-8" cy="-8" r="2" fill="white">
-            <animate
-              attributeName="fill"
-              values="white;#06D6A0;white"
-              dur="3s"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle cx="8" cy="-8" r="2" fill="white">
-            <animate
-              attributeName="fill"
-              values="white;#FF6B35;white"
-              dur="3.5s"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle cx="-8" cy="8" r="2" fill="white">
-            <animate
-              attributeName="fill"
-              values="white;#FFD700;white"
-              dur="2.8s"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle cx="8" cy="8" r="2" fill="white">
-            <animate
-              attributeName="fill"
-              values="white;#1E3A8A;white"
-              dur="4s"
-              repeatCount="indefinite"
-            />
-          </circle>
-        </g>
-
-        {/* Premium Travel Elements */}
-        <g fill="url(#travelAccent)" opacity="0.9">
-          {/* Luxury Aircraft Design */}
-          <g transform="translate(30, 30)">
-            <path
-              d="M0 3 L12 0 L15 2 L12 4 L18 7 L15 10 L12 7 L0 10 L3 5 Z"
-              transform="scale(0.7) rotate(35)"
-              filter="url(#particleGlow)"
-            >
-              <animateTransform
-                attributeName="transform"
-                attributeType="XML"
-                type="rotate"
-                values="35; 40; 35"
-                dur="8s"
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="opacity"
-                values="0.9;1;0.9"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </path>
-          </g>
-
-          {/* Smart Location Pin */}
-          <g transform="translate(85, 85)">
-            <path
-              d="M6 0 C9 0 12 3 12 6 C12 10 6 18 6 18 C6 18 0 10 0 6 C0 3 3 0 6 0 Z"
-              transform="scale(0.8)"
-              filter="url(#particleGlow)"
-            />
-            <circle cx="4.8" cy="4.8" r="2" fill="white">
-              <animate
-                attributeName="r"
-                values="2;2.5;2"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <animate
-              attributeName="opacity"
-              values="0.9;1;0.9"
-              dur="5s"
-              repeatCount="indefinite"
-            />
-          </g>
-
-          {/* Luxury Compass */}
-          <g transform="translate(85, 30)">
-            <g transform="scale(0.8)" filter="url(#particleGlow)">
-              {/* Compass Rose */}
-              <polygon points="6,0 7,5 6,10 5,5" fill="url(#travelAccent)" />
-              <polygon points="0,6 5,7 10,6 5,5" fill="url(#travelAccent)" opacity="0.7" />
-              <polygon points="6,0 7,5 6,10 5,5" fill="url(#travelAccent)" transform="rotate(45 6 6)" opacity="0.5" />
-              <polygon points="0,6 5,7 10,6 5,5" fill="url(#travelAccent)" transform="rotate(45 6 6)" opacity="0.3" />
-              <circle cx="6" cy="6" r="1.5" fill="white">
-                <animate
-                  attributeName="r"
-                  values="1.5;2;1.5"
-                  dur="4s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            </g>
+        {/* Animated Travel Elements */}
+        {/* Flying Airplane */}
+        <g transform="translate(25, 25)" opacity="0.7">
+          <path
+            d="M0 2 L8 0 L10 1 L8 2 L12 4 L10 6 L8 4 L0 6 L2 3 Z"
+            fill="url(#owlPrimary)"
+            transform="scale(0.8)"
+            filter="url(#premiumGlow)"
+          >
             <animateTransform
               attributeName="transform"
               attributeType="XML"
               type="rotate"
-              from="0 85 30"
-              to="360 85 30"
-              dur="15s"
-              repeatCount="indefinite"
-            />
-          </g>
-        </g>
-
-        {/* Particle Flow System */}
-        <g stroke="url(#luxuryPrimary)" strokeWidth="1" fill="none" opacity="0.4">
-          {/* Data Flow Paths */}
-          <path d="M35 35 Q60 25 85 35" strokeDasharray="3,4" filter="url(#particleGlow)">
-            <animate
-              attributeName="stroke-dashoffset"
-              values="0;14;0"
-              dur="4s"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="opacity"
-              values="0.4;0.8;0.4"
-              dur="4s"
-              repeatCount="indefinite"
-            />
-          </path>
-          <path d="M35 85 Q60 95 85 85" strokeDasharray="3,4" filter="url(#particleGlow)">
-            <animate
-              attributeName="stroke-dashoffset"
-              values="0;-14;0"
-              dur="5s"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="opacity"
-              values="0.4;0.8;0.4"
-              dur="5s"
-              repeatCount="indefinite"
-            />
-          </path>
-          <path d="M35 35 Q25 60 35 85" strokeDasharray="2,3" filter="url(#particleGlow)">
-            <animate
-              attributeName="stroke-dashoffset"
-              values="0;10;0"
+              values="0; 10; 0"
               dur="6s"
               repeatCount="indefinite"
             />
           </path>
-          <path d="M85 35 Q95 60 85 85" strokeDasharray="2,3" filter="url(#particleGlow)">
+          {/* Airplane trail */}
+          <path
+            d="M-5 3 Q-2 2 0 3"
+            stroke="url(#owlAccent)"
+            strokeWidth="1"
+            fill="none"
+            strokeDasharray="2,2"
+            opacity="0.5"
+          >
             <animate
               attributeName="stroke-dashoffset"
-              values="0;-10;0"
-              dur="4.5s"
+              values="0;4;0"
+              dur="2s"
               repeatCount="indefinite"
             />
           </path>
         </g>
 
-        {/* Interactive Hover Glow */}
+        {/* Chat Bubble */}
+        <g transform="translate(85, 25)" opacity="0.6">
+          <circle cx="5" cy="5" r="4" fill="url(#owlAccent)" />
+          <path d="M3 7 L5 9 L7 7" fill="url(#owlAccent)" />
+          <circle cx="5" cy="5" r="1.5" fill="white">
+            <animate
+              attributeName="r"
+              values="1.5;2;1.5"
+              dur="3s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+
+        {/* Main Owl Design */}
+        <g transform="translate(60, 45)">
+          {/* Owl Head/Body */}
+          <ellipse
+            cx="0"
+            cy="0"
+            rx="25"
+            ry="20"
+            fill="url(#owlPrimary)"
+            filter="url(#premiumGlow)"
+          >
+            <animate
+              attributeName="ry"
+              values="20;21;20"
+              dur="5s"
+              repeatCount="indefinite"
+            />
+          </ellipse>
+
+          {/* Owl Ears/Horns */}
+          <path
+            d="M-15 -15 Q-18 -25 -12 -20 Q-8 -18 -10 -12"
+            fill="url(#owlPrimary)"
+            opacity="0.9"
+          />
+          <path
+            d="M15 -15 Q18 -25 12 -20 Q8 -18 10 -12"
+            fill="url(#owlPrimary)"
+            opacity="0.9"
+          />
+          
+          {/* Owl Ear Accents */}
+          <path
+            d="M-15 -15 Q-16 -20 -13 -18"
+            fill="url(#owlAccent)"
+            opacity="0.8"
+          />
+          <path
+            d="M15 -15 Q16 -20 13 -18"
+            fill="url(#owlAccent)"
+            opacity="0.8"
+          />
+
+          {/* Left Eye */}
+          <circle
+            cx="-10"
+            cy="-3"
+            r="8"
+            fill="url(#eyeGradient)"
+            filter="url(#softShadow)"
+          >
+            <animate
+              attributeName="r"
+              values="8;8.5;8"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+          </circle>
+          
+          {/* Left Eye Compass */}
+          <circle
+            cx="-10"
+            cy="-3"
+            r="4"
+            fill="url(#compassGradient)"
+          >
+            <animate
+              attributeName="r"
+              values="4;4.5;4"
+              dur="3s"
+              repeatCount="indefinite"
+            />
+          </circle>
+          
+          {/* Compass Points in Left Eye */}
+          <g transform="translate(-10, -3)" stroke="white" strokeWidth="0.5" opacity="0.8">
+            <line x1="0" y1="-3" x2="0" y2="-2" />
+            <line x1="0" y1="2" x2="0" y2="3" />
+            <line x1="-3" y1="0" x2="-2" y2="0" />
+            <line x1="2" y1="0" x2="3" y2="0" />
+            <animateTransform
+              attributeName="transform"
+              attributeType="XML"
+              type="rotate"
+              from="0 -10 -3"
+              to="360 -10 -3"
+              dur="8s"
+              repeatCount="indefinite"
+            />
+          </g>
+
+          {/* Right Eye */}
+          <circle
+            cx="10"
+            cy="-3"
+            r="8"
+            fill="url(#eyeGradient)"
+            filter="url(#softShadow)"
+          >
+            <animate
+              attributeName="r"
+              values="8;8.5;8"
+              dur="4.5s"
+              repeatCount="indefinite"
+            />
+          </circle>
+          
+          {/* Right Eye Compass */}
+          <circle
+            cx="10"
+            cy="-3"
+            r="4"
+            fill="url(#compassGradient)"
+          >
+            <animate
+              attributeName="r"
+              values="4;4.5;4"
+              dur="3.5s"
+              repeatCount="indefinite"
+            />
+          </circle>
+          
+          {/* Compass Points in Right Eye */}
+          <g transform="translate(10, -3)" stroke="white" strokeWidth="0.5" opacity="0.8">
+            <line x1="0" y1="-3" x2="0" y2="-2" />
+            <line x1="0" y1="2" x2="0" y2="3" />
+            <line x1="-3" y1="0" x2="-2" y2="0" />
+            <line x1="2" y1="0" x2="3" y2="0" />
+            <animateTransform
+              attributeName="transform"
+              attributeType="XML"
+              type="rotate"
+              from="0 10 -3"
+              to="-360 10 -3"
+              dur="10s"
+              repeatCount="indefinite"
+            />
+          </g>
+
+          {/* Owl Beak */}
+          <path
+            d="M0 3 L-2 8 L2 8 Z"
+            fill="url(#owlAccent)"
+            filter="url(#premiumGlow)"
+          >
+            <animate
+              attributeName="opacity"
+              values="1;0.8;1"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+          </path>
+
+          {/* Wing Accents */}
+          <path
+            d="M-20 5 Q-25 8 -22 12 Q-18 10 -16 8"
+            fill="url(#owlAccent)"
+            opacity="0.7"
+          />
+          <path
+            d="M20 5 Q25 8 22 12 Q18 10 16 8"
+            fill="url(#owlAccent)"
+            opacity="0.7"
+          />
+        </g>
+
+        {/* Bottom Triangle/Arrow */}
+        <g transform="translate(60, 85)">
+          <path
+            d="M0 -5 L-8 5 L8 5 Z"
+            fill="url(#owlPrimary)"
+            filter="url(#premiumGlow)"
+          >
+            <animate
+              attributeName="opacity"
+              values="1;0.7;1"
+              dur="3s"
+              repeatCount="indefinite"
+            />
+          </path>
+          <path
+            d="M0 -3 L-5 3 L5 3 Z"
+            fill="url(#owlAccent)"
+            opacity="0.8"
+          />
+        </g>
+
+        {/* Floating Particles */}
+        <g opacity="0.4">
+          {[...Array(6)].map((_, i) => (
+            <circle
+              key={i}
+              cx={30 + (i * 12)}
+              cy={95}
+              r="1"
+              fill="url(#owlAccent)"
+            >
+              <animate
+                attributeName="cy"
+                values="95;85;95"
+                dur={`${2 + i * 0.3}s`}
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="opacity"
+                values="0.4;0.8;0.4"
+                dur={`${2 + i * 0.3}s`}
+                repeatCount="indefinite"
+              />
+            </circle>
+          ))}
+        </g>
+
+        {/* Interactive Hover Ring */}
         <circle
           cx="60"
           cy="60"
-          r="28"
+          r="45"
           fill="none"
-          stroke="url(#travelAccent)"
-          strokeWidth="0.5"
+          stroke="url(#owlAccent)"
+          strokeWidth="0"
           opacity="0"
-          className="group-hover:opacity-60 transition-opacity duration-500"
+          className="group-hover:stroke-width-2 group-hover:opacity-60 transition-all duration-500"
         >
           <animate
             attributeName="r"
-            values="28;32;28"
+            values="45;48;45"
             dur="2s"
             repeatCount="indefinite"
           />
@@ -357,17 +375,17 @@ const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 
           <circle
             cx="60"
             cy="60"
-            r="25"
+            r="40"
             fill="none"
             stroke="#06D6A0"
-            strokeWidth="2"
-            strokeDasharray="157"
-            strokeDashoffset="157"
+            strokeWidth="3"
+            strokeDasharray="251"
+            strokeDashoffset="251"
           >
             <animate
               attributeName="stroke-dashoffset"
-              values="157;0"
-              dur="1s"
+              values="251;0"
+              dur="1.5s"
               fill="freeze"
             />
           </circle>
@@ -380,9 +398,9 @@ const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 
               key={i}
               cx="60"
               cy="60"
-              r="1"
-              fill="url(#travelAccent)"
-              transform={`rotate(${i * 45} 60 60) translate(40 0)`}
+              r="2"
+              fill="url(#owlAccent)"
+              transform={`rotate(${i * 45} 60 60) translate(35 0)`}
             >
               <animate
                 attributeName="opacity"
