@@ -62,15 +62,15 @@ const AboutPage: React.FC<AboutPageProps> = ({ onBack }) => {
           </button>
           
           <div className="flex items-center gap-3">
-            <TravelMateAILogo className="w-10 h-10" />
+            <TravelMateAILogo className="w-8 h-8" />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
-                <span className="font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
-                  <span className="font-elegant font-semibold tracking-wide">Travel</span><span className="font-modern font-bold tracking-tight">Mate</span>
-                  <span className="text-sm ml-1 font-sans font-normal not-italic opacity-80">AI</span>
+                <span className="font-light text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
+                  <span className="font-elegant font-semibold tracking-wide text-base">Travel</span><span className="font-modern font-bold tracking-tight text-base">Mate</span>
+                  <span className="text-xs ml-1 font-sans font-normal opacity-80">AI</span>
                 </span>
               </h1>
-              <p className="text-sm text-gray-300">About the Assistant</p>
+              <p className="text-xs text-gray-300">About the Assistant</p>
             </div>
           </div>
 

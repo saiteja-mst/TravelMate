@@ -277,15 +277,15 @@ For itineraries, provide day-by-day breakdown with activities, travel times, cos
       <div className="bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-2xl fixed top-0 left-0 right-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <TravelMateAILogo className="w-10 h-10" />
+            <TravelMateAILogo className="w-8 h-8" />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-['Inter']">
-                <span className="font-light relative text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
-                  <span className="font-elegant font-semibold tracking-wide">Travel</span><span className="font-modern font-bold tracking-tight">Mate</span>
-                  <span className="text-sm ml-1 font-sans font-normal not-italic opacity-80">AI</span>
+                <span className="font-light text-white bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text">
+                  <span className="font-elegant font-semibold tracking-wide text-base">Travel</span><span className="font-modern font-bold tracking-tight text-base">Mate</span>
+                  <span className="text-xs ml-1 font-sans font-normal opacity-80">AI</span>
                 </span>
               </h1>
-              <p className="text-sm text-gray-300">Your Personal Travel Assistant</p>
+              <p className="text-xs text-gray-300">Your Personal Travel Assistant</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
