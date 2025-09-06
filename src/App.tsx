@@ -373,7 +373,6 @@ function App() {
                 <div className="flex justify-end">
                   <button
                     type="button"
-                    onClick={handleForgotPassword}
                     className="text-sm text-teal-400 hover:text-teal-300 font-medium transition-colors hover:underline"
                   >
                     Forgot password?
