@@ -1,24 +1,18 @@
 import React from 'react';
 
-interface TravelMateAILogoProps {
-  className?: string;
-}
-
-const TravelMateAILogo: React.FC<TravelMateAILogoProps> = ({ className = "" }) => {
+const TravelMateAILogo: React.FC<{ className?: string }> = ({ className = "w-10 h-10" }) => {
   return (
-    <div className={`inline-block group ${className}`}>
+    <div className={`${className} relative group cursor-pointer`}>
       <svg
-        width="120"
-        height="120"
         viewBox="0 0 120 120"
+        className="w-full h-full drop-shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-xl"
         xmlns="http://www.w3.org/2000/svg"
-        className="drop-shadow-lg"
       >
         <defs>
-          {/* Primary Gradient */}
+          {/* Primary Gradient - Navy to Blue */}
           <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0B1426" />
-            <stop offset="50%" stopColor="#1E3A8A" />
+            <stop offset="0%" stopColor="#1e3a8a" />
+            <stop offset="50%" stopColor="#3b82f6" />
             <stop offset="100%" stopColor="#1e40af" />
           </linearGradient>
 
@@ -369,3 +363,5 @@ const TravelMateAILogo: React.FC<TravelMateAILogoProps> = ({ className = "" }) =
 };
 
 export default TravelMateAILogo;
+
+
