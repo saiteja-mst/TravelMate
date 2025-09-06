@@ -379,7 +379,10 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
               <div>
                 <h1 className="text-lg font-bold bg-gradient-to-r from-orange-400 via-teal-400 to-blue-400 bg-clip-text text-transparent">
                   TravelMate AI
-                Enter your email address and we'll send you a 6-digit OTP code to reset your password
+                </h1>
+                <p className="text-xs text-gray-400">
+                  Enter your email address and we'll send you a 6-digit OTP code to reset your password
+                </p>
               </div>
             </div>
 
